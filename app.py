@@ -4,7 +4,42 @@ import pandas as pd
 from datetime import datetime
 import io
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2.service_account import Credentials
+
+# --- HELPER FUNCTION: SAVE TO GOOGLE SHEETS ---
+def save_to_google_sheets(data_dict):
+    """Save quiz results to Google Sheets"""
+    try:
+        # Setup credentials
+        scope = ['https://spreadsheets.google.com/feeds',
+                 'https://www.googleapis.com/auth/drive']
+        
+        # Load credentials from Streamlit secrets
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(
+            st.secrets["gcp_service_account"], scope
+        )
+        
+        # Authorize and open spreadsheet
+        client = gspread.authorize(credentials)
+        spreadsheet_url = st.secrets["google_sheets"]["spreadsheet_url"]
+        sheet = client.open_by_url(spreadsheet_url).sheet1
+        
+        # Get existing data to check if header exists
+        existing_data = sheet.get_all_values()
+        
+        # If sheet is empty, add headers
+        if len(existing_data) == 0:
+            headers = list(data_dict.keys())
+            sheet.append_row(headers)
+        
+        # Append new row
+        values = list(data_dict.values())
+        sheet.append_row(values)
+        
+        return True
+    except Exception as e:
+        st.error(f"Error saving to Google Sheets: {str(e)}")
+        return False
 
 # --- PAGE CONFIG ---
 st.set_page_config(
@@ -704,16 +739,16 @@ if st.session_state.current_question == len(QUESTIONS):
     
     st.markdown("---")
     
-    # --- 10. SAVE RESULTS (Auto-save to CSV) ---
+    # --- 10. SAVE RESULTS TO GOOGLE SHEETS ---
     
     result_data = {
-        "Timestamp": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")],
-        "Skor_X_Murni_Terapan": [score_x],
-        "Skor_Y_Formalis_Intuitif": [score_y],
+        "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "Skor_X_Murni_Terapan": score_x,
+        "Skor_Y_Formalis_Intuitif": score_y,
     }
     
     for i, q in enumerate(QUESTIONS):
-        result_data[f"Soal_{i+1}"] = [st.session_state.answers[i]]
+        result_data[f"Soal_{i+1}"] = st.session_state.answers[i]
     
     if score_x < 0:
         if score_y > 0:
@@ -726,18 +761,13 @@ if st.session_state.current_question == len(QUESTIONS):
         else:
             personality = "Si Analis (Terapan / Formalis)"
     
-    result_data["Tipe_Matematikawan"] = [personality]
+    result_data["Tipe_Matematikawan"] = personality
     
-    df_result = pd.DataFrame(result_data)
-    
-    try:
-        existing_df = pd.read_csv("kuis_responses.csv")
-        updated_df = pd.concat([existing_df, df_result], ignore_index=True)
-        updated_df.to_csv("kuis_responses.csv", index=False, encoding='utf-8-sig')
-    except FileNotFoundError:
-        df_result.to_csv("kuis_responses.csv", index=False, encoding='utf-8-sig')
-    
-    st.success("✅ Hasil kuis lo udah tersimpan!")
+    # Save to Google Sheets
+    if save_to_google_sheets(result_data):
+        st.success("✅ Hasil kuis lo udah tersimpan ke Google Sheets!")
+    else:
+        st.warning("⚠️ Hasil kuis berhasil ditampilkan, tapi gagal menyimpan ke database.")
     
     st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
     
