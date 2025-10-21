@@ -314,6 +314,7 @@ plot_limit = max(max_x, max_y) + 2
 if 'current_question' not in st.session_state:
     st.session_state.current_question = 0
     st.session_state.answers = {}
+    st.session_state.results_saved = False  # <-- TAMBAHKAN INI
 
 # --- 4. BUILD STREAMLIT APP ---
 
@@ -369,7 +370,13 @@ if st.session_state.current_question < len(QUESTIONS):
     st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1, 1, 1])
-
+    with col2:
+    if st.button("🔄 Ulang Kuis", use_container_width=True):
+        st.session_state.current_question = 0
+        st.session_state.answers = {}
+        st.session_state.results_saved = False  # <-- TAMBAHKAN INI
+        st.rerun()
+        
     with col1:
         if st.button("← Sebelumnya", disabled=(st.session_state.current_question == 0), use_container_width=True):
             st.session_state.current_question -= 1
@@ -769,17 +776,16 @@ if st.session_state.current_question == len(QUESTIONS):
     
     result_data["Tipe_Matematikawan"] = personality
     
-    # Save to Google Sheets
-    if save_to_google_sheets(result_data):
-        st.success("✅ Hasil kuis lo udah tersimpan ke Google Sheets!")
+    # Hanya simpan jika BELUM disimpan
+    if not st.session_state.results_saved:
+        if save_to_google_sheets(result_data):
+            st.success("✅ Hasil kuis lo udah tersimpan ke Google Sheets!")
+            # Set flag ke True setelah berhasil disimpan
+            st.session_state.results_saved = True 
+        else:
+            st.warning("⚠️ Hasil kuis berhasil ditampilkan, tapi gagal menyimpan ke database.")
     else:
-        st.warning("⚠️ Hasil kuis berhasil ditampilkan, tapi gagal menyimpan ke database.")
+        # (Opsional) Beri tahu user bahwa data sudah disimpan
+        st.info("ℹ️ Hasil ini sudah tersimpan sebelumnya.")
     
     st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
-    
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col2:
-        if st.button("🔄 Ulang Kuis", use_container_width=True):
-            st.session_state.current_question = 0
-            st.session_state.answers = {}
-            st.rerun()
