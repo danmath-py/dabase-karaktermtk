@@ -2,13 +2,6 @@ streamlit
 matplotlib
 pandas
 gspread
-oauth2client
-```
-
----
-
-## 🔒 .gitignore (Penting!)
-```
-.streamlit/secrets.toml
-*.pyc
-__pycache__/
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
