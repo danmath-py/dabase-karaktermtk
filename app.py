@@ -473,11 +473,6 @@ if st.session_state.current_question == len(QUESTIONS):
     
     st.markdown("---")
     st.markdown("<h3 style='text-align: center; margin-bottom: 30px;'>🎯 Tipe Matematikawan Lo Adalah:</h3>", unsafe_allow_html=True)
-    if st.button("🔄 Ulang Kuis", use_container_width=True):
-        st.session_state.current_question = 0
-        st.session_state.answers = {}
-        st.session_state.results_saved = False  # <-- TAMBAHKAN INI
-        st.rerun()
     if score_x < 0:
         if score_y > 0:
             st.markdown(
@@ -524,7 +519,11 @@ if st.session_state.current_question == len(QUESTIONS):
                 "</p></div>",
                 unsafe_allow_html=True
             )
-
+    if st.button("🔄 Ulang Kuis", use_container_width=True):
+        st.session_state.current_question = 0
+        st.session_state.answers = {}
+        st.session_state.results_saved = False  # <-- TAMBAHKAN INI
+        st.rerun()
     st.markdown("---")
     
     # --- 8. MATEMATIKAWAN TERKENAL & CABANG MATEMATIKA ---
