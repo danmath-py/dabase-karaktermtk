@@ -15,7 +15,7 @@ def save_to_google_sheets(data_dict):
                  'https://www.googleapis.com/auth/drive']
         
         # Load credentials from Streamlit secrets
-        credentials = ServiceAccountCredentials.from_json_keyfile_dict(
+        credentials = Credentials.from_json_keyfile_dict(
             st.secrets["gcp_service_account"], scope
         )
         
