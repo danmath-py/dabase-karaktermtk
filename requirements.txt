@@ -3,3 +3,12 @@ matplotlib
 pandas
 gspread
 oauth2client
+```
+
+---
+
+## 🔒 .gitignore (Penting!)
+```
+.streamlit/secrets.toml
+*.pyc
+__pycache__/
