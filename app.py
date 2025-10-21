@@ -370,12 +370,6 @@ if st.session_state.current_question < len(QUESTIONS):
     st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1, 1, 1])
-    with col2:
-        if st.button("🔄 Ulang Kuis", use_container_width=True):
-            st.session_state.current_question = 0
-            st.session_state.answers = {}
-            st.session_state.results_saved = False  # <-- TAMBAHKAN INI
-            st.rerun()
         
     with col1:
         if st.button("← Sebelumnya", disabled=(st.session_state.current_question == 0), use_container_width=True):
@@ -479,7 +473,11 @@ if st.session_state.current_question == len(QUESTIONS):
     
     st.markdown("---")
     st.markdown("<h3 style='text-align: center; margin-bottom: 30px;'>🎯 Tipe Matematikawan Lo Adalah:</h3>", unsafe_allow_html=True)
-
+    if st.button("🔄 Ulang Kuis", use_container_width=True):
+        st.session_state.current_question = 0
+        st.session_state.answers = {}
+        st.session_state.results_saved = False  # <-- TAMBAHKAN INI
+        st.rerun()
     if score_x < 0:
         if score_y > 0:
             st.markdown(
