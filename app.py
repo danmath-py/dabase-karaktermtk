@@ -371,11 +371,11 @@ if st.session_state.current_question < len(QUESTIONS):
     
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
-    if st.button("🔄 Ulang Kuis", use_container_width=True):
-        st.session_state.current_question = 0
-        st.session_state.answers = {}
-        st.session_state.results_saved = False  # <-- TAMBAHKAN INI
-        st.rerun()
+        if st.button("🔄 Ulang Kuis", use_container_width=True):
+            st.session_state.current_question = 0
+            st.session_state.answers = {}
+            st.session_state.results_saved = False  # <-- TAMBAHKAN INI
+            st.rerun()
         
     with col1:
         if st.button("← Sebelumnya", disabled=(st.session_state.current_question == 0), use_container_width=True):
