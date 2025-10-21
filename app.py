@@ -312,9 +312,9 @@ plot_limit = max(max_x, max_y) + 2
 # --- 3. INITIALIZE SESSION STATE ---
 
 if 'current_question' not in st.session_state:
-    st.session_state.current_question = 0
-    st.session_state.answers = {}
-    st.session_state.results_saved = False  # <-- TAMBAHKAN INI
+    st.session_state.current_question = 0
+    st.session_state.answers = {}
+    st.session_state.results_saved = False  # <-- INI BARIS YANG HILANG
 
 # --- 4. BUILD STREAMLIT APP ---
 
