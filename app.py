@@ -547,4 +547,245 @@ if st.session_state.current_question == len(QUESTIONS):
         "pemodel": [
             {"name": "Isaac Newton", "desc": "Pelopor kalkulus untuk memecahkan masalah fisika dunia nyata, intuitif tapi aplikatif", "era": "1643-1727"},
             {"name": "Leonhard Euler", "desc": "Master problem-solver yang aplikatif, menyelesaikan ribuan masalah praktis dengan intuisi kuat", "era": "1707-1783"},
-            {"name": "John von Neumann", "desc": "Visioner terapan di teori game, kom
+            {"name": "John von Neumann", "desc": "Visioner terapan di teori game, komputasi, dan fisika kuantum dengan intuisi luar biasa", "era": "1903-1957"}
+        ],
+        "analis": [
+            {"name": "Carl Friedrich Gauss", "desc": "Pangeran matematika dengan ketepatan komputasi legendaris dan analisis yang sempurna", "era": "1777-1855"},
+            {"name": "Pierre-Simon Laplace", "desc": "Master analisis matematika terapan di astronomi dan probabilitas dengan presisi tinggi", "era": "1749-1827"},
+            {"name": "John Tukey", "desc": "Pelopor statistik modern dan analisis data, menciptakan metode praktis yang presisi", "era": "1915-2000"}
+        ]
+    }
+    
+    # Determine personality type
+    if score_x < 0:
+        if score_y > 0:
+            personality_key = "visioner"
+        else:
+            personality_key = "arsitek"
+    else:
+        if score_y > 0:
+            personality_key = "pemodel"
+        else:
+            personality_key = "analis"
+    
+    # Display mathematicians
+    cols = st.columns(3)
+    for idx, math in enumerate(mathematicians[personality_key]):
+        with cols[idx]:
+            st.markdown(
+                f"<div style='background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 24px; border-radius: 16px; "
+                f"border: 2px solid #e2e8f0; height: 100%; box-shadow: 0 2px 8px rgba(0,0,0,0.05);'>"
+                f"<h4 style='color: #6366f1; margin-top: 0; font-size: 1.3em;'>{math['name']}</h4>"
+                f"<p style='color: #64748b; font-size: 0.85em; font-weight: 600; margin-bottom: 12px;'>{math['era']}</p>"
+                f"<p style='color: #475569; line-height: 1.6; font-size: 0.95em;'>{math['desc']}</p>"
+                f"</div>",
+                unsafe_allow_html=True
+            )
+    
+    st.markdown("<div style='height: 40px;'></div>", unsafe_allow_html=True)
+    
+    # --- 9. CABANG MATEMATIKA YANG MENARIK ---
+    
+    st.markdown("<h3 style='text-align: center; margin-bottom: 30px;'>📚 Cabang Matematika yang Menarik Buat Lo</h3>", unsafe_allow_html=True)
+    
+    # Define mathematical fields for each type
+    math_fields = {
+        "visioner": [
+            {
+                "name": "🌀 Topologi", 
+                "desc": "Studi tentang bentuk dan ruang yang bertransformasi. Lo bakal suka konsep abstrak seperti manifold, homotopi, dan ruang-ruang eksotis.",
+                "topics": "Topologi Aljabar • Teori Simpul • Manifold"
+            },
+            {
+                "name": "🎨 Geometri Diferensial", 
+                "desc": "Geometri di permukaan melengkung dengan kalkulus. Perfect buat yang suka visualisasi dan intuisi geometris yang kuat.",
+                "topics": "Kurva & Permukaan • Tensor • Geometri Riemann"
+            },
+            {
+                "name": "🔮 Teori Kategori", 
+                "desc": "Bahasa abstrak yang menyatukan berbagai cabang matematika. Lo bakal suka pola universal dan struktur di balik struktur.",
+                "topics": "Functor • Natural Transformation • Category Theory"
+            },
+            {
+                "name": "🌌 Geometri Aljabar", 
+                "desc": "Studi bentuk geometri lewat persamaan aljabar. Kombinasi indah antara visualisasi geometris dan struktur aljabar abstrak.",
+                "topics": "Varieties • Schemes • Cohomology Theory"
+            },
+            {
+                "name": "🎭 Teori Representasi", 
+                "desc": "Cara melihat struktur abstrak lewat transformasi linear. Menghubungkan aljabar dengan geometri secara intuitif.",
+                "topics": "Group Representations • Lie Groups • Character Theory"
+            },
+            {
+                "name": "🔄 Sistem Dinamik", 
+                "desc": "Studi pola perubahan dan chaos di sistem yang evolving. Visualisasi fractal dan attractor yang memukau.",
+                "topics": "Chaos Theory • Fractals • Bifurcation Theory"
+            }
+        ],
+        "arsitek": [
+            {
+                "name": "🏛️ Teori Himpunan & Logika", 
+                "desc": "Fondasi dari semua matematika. Lo bakal menikmati membangun matematika dari aksioma dasar dengan presisi sempurna.",
+                "topics": "Aksioma ZFC • Model Theory • Proof Theory"
+            },
+            {
+                "name": "🔢 Aljabar Abstrak", 
+                "desc": "Studi struktur aljabar murni seperti grup, ring, dan field. Sistematis, elegan, dan beautifully structured.",
+                "topics": "Group Theory • Ring Theory • Galois Theory"
+            },
+            {
+                "name": "📐 Teori Bilangan", 
+                "desc": "Eksplorasi mendalam sifat bilangan bulat dengan bukti yang rigorous dan elegant. The queen of mathematics.",
+                "topics": "Number Theory • Diophantine Equations • Modular Forms"
+            },
+            {
+                "name": "🧩 Kombinatorika", 
+                "desc": "Seni menghitung dan menyusun objek diskrit dengan metode yang presisi. Struktur yang elegant dan proof yang beautiful.",
+                "topics": "Graph Theory • Enumerative Combinatorics • Design Theory"
+            },
+            {
+                "name": "🔐 Kriptografi & Teori Coding", 
+                "desc": "Matematika di balik keamanan data dan komunikasi. Membutuhkan pemahaman formal yang sangat presisi.",
+                "topics": "Public Key Cryptography • Error Correcting Codes • Lattice Theory"
+            },
+            {
+                "name": "⚖️ Teori Ukuran & Integrasi", 
+                "desc": "Fondasi rigorous dari kalkulus modern. Membangun konsep integral dan probabilitas dari ground up.",
+                "topics": "Measure Theory • Lebesgue Integration • Ergodic Theory"
+            }
+        ],
+        "pemodel": [
+            {
+                "name": "🌊 Persamaan Diferensial", 
+                "desc": "Model perubahan di dunia nyata - dari cuaca, populasi, hingga aliran fluida. Powerful dan sangat aplikatif.",
+                "topics": "PDE • Dynamical Systems • Chaos Theory"
+            },
+            {
+                "name": "🎲 Probabilitas & Stokastik", 
+                "desc": "Matematika ketidakpastian untuk finance, machine learning, dan sistem kompleks. Intuitive dan practical.",
+                "topics": "Stochastic Calculus • Random Processes • Markov Chains"
+            },
+            {
+                "name": "🤖 Matematika Komputasi", 
+                "desc": "Kombinasi matematika dan algoritma untuk AI, data science, dan optimization. Super relevant di era digital.",
+                "topics": "Machine Learning • Graph Theory • Optimization"
+            },
+            {
+                "name": "🎯 Riset Operasi", 
+                "desc": "Optimasi keputusan di sistem kompleks - supply chain, scheduling, resource allocation. Langsung applicable ke bisnis.",
+                "topics": "Linear Programming • Integer Programming • Network Optimization"
+            },
+            {
+                "name": "🎮 Teori Game & Keputusan", 
+                "desc": "Analisis strategi dalam situasi kompetitif dan kooperatif. Aplikasi di ekonomi, politik, dan AI.",
+                "topics": "Game Theory • Decision Theory • Auction Theory"
+            },
+            {
+                "name": "🧬 Matematika Biologi", 
+                "desc": "Model matematis untuk sistem biologis - epidemi, ekologi, genetika. Interdisciplinary dan impact-driven.",
+                "topics": "Population Dynamics • Epidemiology • Systems Biology"
+            },
+            {
+                "name": "🌐 Teori Jaringan & Graf", 
+                "desc": "Analisis struktur koneksi di social networks, internet, dan sistem kompleks. Very relevant untuk data science.",
+                "topics": "Network Science • Social Networks • Community Detection"
+            }
+        ],
+        "analis": [
+            {
+                "name": "📊 Analisis Numerik", 
+                "desc": "Metode presisi tinggi untuk menyelesaikan masalah matematika di komputer. Essential untuk engineering dan science.",
+                "topics": "Numerical Methods • Finite Elements • Error Analysis"
+            },
+            {
+                "name": "📈 Analisis Real & Kompleks", 
+                "desc": "Studi mendalam tentang fungsi, limit, dan kontinuitas dengan rigorous proofs. Foundation of calculus.",
+                "topics": "Real Analysis • Complex Analysis • Functional Analysis"
+            },
+            {
+                "name": "💹 Matematika Keuangan", 
+                "desc": "Aplikasi matematika presisi untuk pricing, risk management, dan trading strategies di financial markets.",
+                "topics": "Quantitative Finance • Options Pricing • Risk Models"
+            },
+            {
+                "name": "📉 Optimasi & Kontrol", 
+                "desc": "Mencari solusi terbaik dengan constraints ketat. Critical untuk engineering, manufacturing, dan logistics.",
+                "topics": "Convex Optimization • Optimal Control • Calculus of Variations"
+            },
+            {
+                "name": "📡 Pemrosesan Sinyal", 
+                "desc": "Analisis dan transformasi data temporal/spatial. Fundamental untuk audio, image processing, dan communications.",
+                "topics": "Fourier Analysis • Wavelets • Digital Signal Processing"
+            },
+            {
+                "name": "🔬 Statistika & Analisis Data", 
+                "desc": "Ekstraksi insight dari data dengan metode yang rigorous. Essential di era big data dan AI.",
+                "topics": "Statistical Inference • Regression Analysis • Bayesian Statistics"
+            },
+            {
+                "name": "⚙️ Matematika Teknik", 
+                "desc": "Tools matematis untuk mechanical, electrical, dan civil engineering. Precision-oriented dan highly applicable.",
+                "topics": "Laplace Transforms • Partial Differential Equations • Finite Element Analysis"
+            },
+            {
+                "name": "🎲 Aktuaria & Manajemen Risiko", 
+                "desc": "Quantifikasi dan mitigasi risiko finansial dengan analisis statistik yang presisi. High-demand career path.",
+                "topics": "Life Contingencies • Loss Models • Credibility Theory"
+            }
+        ]
+    }
+    
+    # Display mathematical fields
+    for field in math_fields[personality_key]:
+        st.markdown(
+            f"<div style='background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); padding: 28px; border-radius: 16px; "
+            f"margin-bottom: 20px; border-left: 6px solid #6366f1; box-shadow: 0 4px 12px rgba(99,102,241,0.1);'>"
+            f"<h4 style='color: #1e293b; margin-top: 0; font-size: 1.4em; margin-bottom: 12px;'>{field['name']}</h4>"
+            f"<p style='color: #475569; line-height: 1.7; font-size: 1.05em; margin-bottom: 16px;'>{field['desc']}</p>"
+            f"<div style='background: #f0f9ff; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #0ea5e9;'>"
+            f"<p style='color: #0c4a6e; margin: 0; font-size: 0.9em; font-weight: 600;'>📌 {field['topics']}</p>"
+            f"</div>"
+            f"</div>",
+            unsafe_allow_html=True
+        )
+    
+    st.markdown("---")
+    
+    # --- 10. SAVE RESULTS TO GOOGLE SHEETS ---
+    
+    result_data = {
+        "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "Skor_X_Murni_Terapan": score_x,
+        "Skor_Y_Formalis_Intuitif": score_y,
+    }
+    
+    for i, q in enumerate(QUESTIONS):
+        result_data[f"Soal_{i+1}"] = st.session_state.answers[i]
+    
+    if score_x < 0:
+        if score_y > 0:
+            personality = "Si Visioner (Murni / Intuitif)"
+        else:
+            personality = "Si Arsitek (Murni / Formalis)"
+    else:
+        if score_y > 0:
+            personality = "Si Pemodel (Terapan / Intuitif)"
+        else:
+            personality = "Si Analis (Terapan / Formalis)"
+    
+    result_data["Tipe_Matematikawan"] = personality
+    
+    # Save to Google Sheets
+    if save_to_google_sheets(result_data):
+        st.success("✅ Hasil kuis lo udah tersimpan ke Google Sheets!")
+    else:
+        st.warning("⚠️ Hasil kuis berhasil ditampilkan, tapi gagal menyimpan ke database.")
+    
+    st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        if st.button("🔄 Ulang Kuis", use_container_width=True):
+            st.session_state.current_question = 0
+            st.session_state.answers = {}
+            st.rerun()
