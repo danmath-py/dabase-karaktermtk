@@ -53,10 +53,10 @@ st.set_page_config(
 st.markdown("""
 <style>
     /* Import font */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800;900&display=swap'); /* <-- URL Noto Sans */
     
     * {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Noto Sans', sans-serif; /* <-- Nama Font Noto Sans */
     }
     
     .stApp {
