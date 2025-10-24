@@ -258,7 +258,7 @@ st.markdown("""
     
     /* Header text */
     .stMarkdown h3 {
-        color: #1e293b !important;
+        color: #f8f9fa !important;
         font-weight: 800 !important;
         margin-bottom: 20px !important;
     }
