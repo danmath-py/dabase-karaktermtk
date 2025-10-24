@@ -64,6 +64,16 @@ st.markdown("""
         background-attachment: fixed;
     }
     
+    /* REVISI BANNER: Hilangkan padding atas dari block container bawaan */
+    .block-container {
+        padding-top: 2rem !important; 
+    }
+    
+    /* REVISI BANNER: Pastikan gambar banner menyentuh tepi */
+    .stImage > img {
+        width: 100%;
+    }
+    
     .main-container {
         background: #ffffff;
         border-radius: 24px;
@@ -73,17 +83,24 @@ st.markdown("""
         margin: 40px auto;
     }
     
-    /* Title styling */
+    /* Title styling (di luar kotak putih) */
     h1 {
         text-align: center;
         color: #ffffff !important;
         font-size: 3.5em !important;
         font-weight: 900 !important;
+        margin-top: 2rem !important; /* Beri jarak dari banner */
         margin-bottom: 10px !important;
         text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         letter-spacing: -1px;
     }
 
+    /* Subtitle styling (di luar kotak putih) */
+    .stMarkdown > div[style*="text-align: center; color: #f8fafc;"] {
+        max-width: 900px;
+        margin: 0 auto 30px auto;
+    }
+    
     /* Question styling */
     .stSubheader {
         font-size: 1.4em !important;
@@ -305,7 +322,6 @@ st.markdown("""
 
 # --- 1. TENTUKAN KUIS (PERSONALITY) ---
 
-# --- REVISI 1: Hapus Opsi Netral ---
 PERSONALITY_OPTIONS = {
     "Setuju Banget": 2,
     "Setuju": 1,
@@ -378,7 +394,6 @@ PERSONALITY_QUESTIONS = [
 
 # --- 2. TENTUKAN MASTER SURVEI ---
 
-# --- REVISI 2 & 3: Ganti 'selectbox' menjadi 'radio' untuk UI yang lebih elok ---
 MASTER_SURVEY_QUESTIONS = [
     # SECTION: GENERAL
     {"id": "nama", "section": "GENERAL", "text": "Nama Lengkap", "type": "text_input", "required": True},
@@ -387,8 +402,8 @@ MASTER_SURVEY_QUESTIONS = [
     {"id": "kab_kota", "section": "GENERAL", "text": "Asal Kabupaten/Kota", "type": "text_input", "required": True},
     {"id": "whatsapp", "section": "GENERAL", "text": "Nomor WhatsApp (Format: wa.me/62...)", "type": "text_input", "required": True},
     {"id": "beasiswa", "section": "GENERAL", "text": "Apakah Kamu Penerima Beasiswa?", "type": "radio", "options": ["Ya", "Tidak"], "required": True},
-    {"id": "daerah_tinggal", "section": "GENERAL", "text": "Daerah tempat tinggal?", "type": "radio", "options": ["Babakan Raya", "Babakan Tengah", "Babakan Lebak", "Babakan Lio", "Perwira", "Dramaga Cantik", "Cibanteng", "Lainnya"], "required": True}, # Diubah ke radio
-    {"id": "status_tinggal", "section": "GENERAL", "text": "Status tempat tinggal?", "type": "radio", "options": ["Kost", "Asrama", "Kontrakan", "Apartkos", "Rumah keluarga", "Lainnya"], "required": True}, # Diubah ke radio
+    {"id": "daerah_tinggal", "section": "GENERAL", "text": "Daerah tempat tinggal?", "type": "radio", "options": ["Babakan Raya", "Babakan Tengah", "Babakan Lebak", "Babakan Lio", "Perwira", "Dramaga Cantik", "Cibanteng", "Lainnya"], "required": True}, 
+    {"id": "status_tinggal", "section": "GENERAL", "text": "Status tempat tinggal?", "type": "radio", "options": ["Kost", "Asrama", "Kontrakan", "Apartkos", "Rumah keluarga", "Lainnya"], "required": True}, 
     
     # SECTION: TIPE MATEMATIKA PART I
     {"id": "tipe_1", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[0]["question"], "type": "personality_quiz", "personality_q_index": 0, "required": True},
@@ -398,12 +413,12 @@ MASTER_SURVEY_QUESTIONS = [
     {"id": "tipe_5", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[4]["question"], "type": "personality_quiz", "personality_q_index": 4, "required": True},
     
     # SECTION: MASUK KE PRODI MATEMATIKA
-    {"id": "jalur_masuk", "section": "MASUK KE PRODI MATEMATIKA", "text": "Jalur Masuk", "type": "radio", "options": ["SNBP", "SNBT", "Mandiri", "Jaketos", "BUD", "PIN", "Lainnya"], "required": True}, # Diubah ke radio
+    {"id": "jalur_masuk", "section": "MASUK KE PRODI MATEMATIKA", "text": "Jalur Masuk", "type": "radio", "options": ["SNBP", "SNBT", "Mandiri", "Jaketos", "BUD", "PIN", "Lainnya"], "required": True}, 
     {"id": "pilihan_ke", "section": "MASUK KE PRODI MATEMATIKA", "text": "Pilihan ke Berapa", "type": "radio", "options": ["1", "2"], "required": True},
     {"id": "alasan_ipb", "section": "MASUK KE PRODI MATEMATIKA", "text": "Alasan Masuk IPB", "type": "text_area", "required": True},
     {"id": "alasan_prodi", "section": "MASUK KE PRODI MATEMATIKA", "text": "Alasan Masuk Prodi Matematika", "type": "text_area", "required": True},
-    {"id": "info_prodi", "section": "MASUK KE PRODI MATEMATIKA", "text": "Dari mana kamu pertama kali mengetahui informasi tentang prodi Matematika IPB?", "type": "radio", "options": ["Sosmed", "Guru BK", "Expo Kampus", "Alumni", "Mahasiswa", "Situs web resmi IPB", "Platform pencarian kampus online", "Event IPB", "Lainnya"], "required": True}, # Diubah ke radio
-    {"id": "pengaruh_memilih", "section": "MASUK KE PRODI MATEMATIKA", "text": "Siapa yang paling berpengaruh dalam keputusanmu memilih Matematika?", "type": "radio", "options": ["Orang tua", "Keluarga", "Guru", "Teman", "Diri sendiri", "Sosmed", "Lainnya"], "required": True}, # Diubah ke radio
+    {"id": "info_prodi", "section": "MASUK KE PRODI MATEMATIKA", "text": "Dari mana kamu pertama kali mengetahui informasi tentang prodi Matematika IPB?", "type": "radio", "options": ["Sosmed", "Guru BK", "Expo Kampus", "Alumni", "Mahasiswa", "Situs web resmi IPB", "Platform pencarian kampus online", "Event IPB", "Lainnya"], "required": True}, 
+    {"id": "pengaruh_memilih", "section": "MASUK KE PRODI MATEMATIKA", "text": "Siapa yang paling berpengaruh dalam keputusanmu memilih Matematika?", "type": "radio", "options": ["Orang tua", "Keluarga", "Guru", "Teman", "Diri sendiri", "Sosmed", "Lainnya"], "required": True},
     {"id": "keraguan", "section": "MASUK KE PRODI MATEMATIKA", "text": "Apakah ada keraguan/kekhawatiran sebelum memutuskan masuk prodi Matematika?", "type": "radio", "options": ["Ya", "Tidak"], "required": True},
 
     # SECTION: TIPE MATEMATIKA PART II
@@ -414,13 +429,11 @@ MASTER_SURVEY_QUESTIONS = [
     {"id": "tipe_10", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[9]["question"], "type": "personality_quiz", "personality_q_index": 9, "required": True},
 
     # SECTION: DI MATEMATIKA
-    # Pengecualian: Tetap selectbox karena daftar terlalu panjang (25+ opsi)
     {"id": "matkul_fav", "section": "DI MATEMATIKA", "text": "Matkul Favorit mu di prodi Matematika apa?", "type": "selectbox", "options": ["ALinDas", "GrafAlgo", "KalDu", "KomDas", "MatDis", "PLM", "PDB", "MetStat", "Geonal", "KalTi", "MetNum", "ProgLin", "PTP", "PDP", "AnKom", "Pemod", "PTL", "Prostok", "StatMat", "AnReal", "SA", "MatKrip", "AKM", "SisDim", "PRO"], "required": True},
     {"id": "matkul_susah", "section": "DI MATEMATIKA", "text": "Apa Menurut mu Matkul Tersusah di prodi Matematika?", "type": "selectbox", "options": ["ALinDas", "GrafAlgo", "KalDu", "KomDas", "MatDis", "PLM", "PDB", "MetStat", "Geonal", "KalTi", "MetNum", "ProgLin", "PTP", "PDP", "AnKom", "Pemod", "PTL", "Prostok", "StatMat", "AnReal", "SA", "MatKrip", "AKM", "SisDim", "PRO"], "required": True},
-    
-    {"id": "jam_belajar", "section": "DI MATEMATIKA", "text": "Berapa Jam yang kamu gunakan untuk belajar per minggu?", "type": "radio", "options": ["G belajar", "1-2", "3-5", "6-10", "11-15", "16-20", "21-25", "26+"], "required": True}, # Diubah ke radio
+    {"id": "jam_belajar", "section": "DI MATEMATIKA", "text": "Berapa Jam yang kamu gunakan untuk belajar per minggu?", "type": "radio", "options": ["G belajar", "1-2", "3-5", "6-10", "11-15", "16-20", "21-25", "26+"], "required": True}, 
     {"id": "waktu_luang", "section": "DI MATEMATIKA", "text": "Apa Kegiatan yang kamu lakukan di Waktu Luang? (Boleh pilih lebih dari 1)", "type": "multiselect", "options": ["Belajar", "Nonton Video/Film", "Tidur", "Nongkrong", "Aktif Kegiatan Kampus", "Main Game", "Sosmed", "Lainnya"], "required": True},
-    {"id": "pengeluaran", "section": "DI MATEMATIKA", "text": "Biasanya Pengeluaran per Bulan berapa? (tidak harus jawab)", "type": "radio", "options": ["Nggak mau jawab", "<Rp1 000 000", "Rp1 000 000-Rp2 000 000", "Rp2 000 000-Rp2 500 000", "+Rp2 500 000"], "required": True}, # Diubah ke radio
+    {"id": "pengeluaran", "section": "DI MATEMATIKA", "text": "Biasanya Pengeluaran per Bulan berapa? (tidak harus jawab)", "type": "radio", "options": ["Nggak mau jawab", "<Rp1 000 000", "Rp1 000 000-Rp2 000 000", "Rp2 000 000-Rp2 500 000", "+Rp2 500 000"], "required": True},
     {"id": "menyesal", "section": "DI MATEMATIKA", "text": "Apakah menyesal masuk prodi Matematika?", "type": "radio", "options": ["Sangat Menyesal", "Menyesal", "Netral", "Puas", "Sangat Puas"], "required": True},
     
     # SECTION: TIPE MATEMATIKA PART III
@@ -433,8 +446,6 @@ MASTER_SURVEY_QUESTIONS = [
 
 
 # --- 3. HITUNG SKOR MAKSIMUM (untuk plot) ---
-# Skor maks/min berubah karena opsi netral (0) hilang
-# Poin maks per soal = 2, Poin min = -2
 max_x = 0
 max_y = 0
 for q in PERSONALITY_QUESTIONS:
@@ -457,11 +468,17 @@ def save_answer(q_id):
 
 # --- 5. BUILD STREAMLIT APP ---
 
-st.markdown("<div class='main-container'>", unsafe_allow_html=True)
+# --- REVISI 1: Tambahkan banner di sini ---
+# Pastikan file 'banner.png' ada di folder yang sama dengan streamlit_app.py
+try:
+    st.image("banner.png", use_column_width='always')
+except Exception as e:
+    st.warning(f"Tidak dapat memuat banner. Pastikan 'banner.png' ada di root repo. Error: {e}")
 
+# Title dan Subtitle sekarang di luar .main-container
 st.title("📊 Database Karakteristik Matematika")
 st.markdown(
-    "<div style='text-align: center; color: #f8fafc; font-size: 1.15em; margin-bottom: 30px; font-weight: 500;'>"
+    "<div style='text-align: center; color: #f8fafc; font-size: 1.15em; font-weight: 500;'>"
     "Survey ini bertujuan untuk memetakan karakteristik mahasiswa Matematika IPB. "
     "Data yang kamu berikan akan sangat membantu kami. "
     "Di akhir, kamu akan melihat Tipe Matematikawan kamu! 🎯"
@@ -469,7 +486,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+# Buka .main-container HANYA untuk konten kuis (kotak putih)
+st.markdown("<div class='main-container'>", unsafe_allow_html=True)
 
 # Progress section
 total_questions = len(MASTER_SURVEY_QUESTIONS)
@@ -507,7 +525,6 @@ if st.session_state.current_question < total_questions:
 
     # --- Display Question Subheader ---
     st.subheader(q_text)
-    # --- REVISI 3: Tambah spasi ---
     st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 
     prev_answer = st.session_state.answers.get(q_id)
@@ -522,7 +539,7 @@ if st.session_state.current_question < total_questions:
 
     elif q_type == "radio":
         options = q_config["options"]
-        default_index = None # --- REVISI 1: Tidak ada default ---
+        default_index = None 
         if prev_answer in options:
             default_index = options.index(prev_answer)
             
@@ -530,7 +547,7 @@ if st.session_state.current_question < total_questions:
     
     elif q_type == "selectbox":
         options = q_config["options"]
-        default_index = None # Tidak ada default
+        default_index = None
         if prev_answer in options:
             default_index = options.index(prev_answer)
             
@@ -543,7 +560,7 @@ if st.session_state.current_question < total_questions:
 
     elif q_type == "personality_quiz":
         options = list(PERSONALITY_OPTIONS.keys())
-        default_index = None # --- REVISI 1: Tidak ada default ---
+        default_index = None 
         if prev_answer in options:
             default_index = options.index(prev_answer)
 
@@ -555,12 +572,10 @@ if st.session_state.current_question < total_questions:
     validation_message = None
     current_value = st.session_state.answers.get(q_id)
 
-    # General "required" check
     if q_required and not current_value:
         is_valid = False
         validation_message = "☝️ Harap isi jawaban lo sebelum lanjut."
     
-    # Specific format validations
     elif q_id == 'nama' and current_value and not current_value.isupper():
         is_valid = False
         validation_message = "Format salah. Nama harus ditulis dengan HURUF KAPITAL."
@@ -613,8 +628,6 @@ if st.session_state.current_question == total_questions:
             p_q_index = q_config["personality_q_index"]
             p_q = PERSONALITY_QUESTIONS[p_q_index]
             
-            # Default ke 0 jika (karena alasan aneh) tidak ada jawaban, 
-            # meskipun validasi seharusnya mencegah ini
             answer_text = st.session_state.answers.get(q_id) 
             answer_score = PERSONALITY_OPTIONS.get(answer_text, 0) 
             
@@ -878,4 +891,17 @@ if st.session_state.current_question == total_questions:
             st.session_state.answers = {}
             st.rerun()
 
+# Tutup .main-container
 st.markdown("</div>", unsafe_allow_html=True)
+
+
+# --- REVISI 2: Tambahkan Copyright Footer di sini ---
+footer_text = "Copyright by Departemen Riset dan Analisis GUMATIKA SSMI IPB 2025"
+st.markdown(
+    f"""
+    <div style='text-align: center; color: #f0f2f6; font-size: 0.85em; margin-top: 40px; margin-bottom: 20px;'>
+        {footer_text}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
