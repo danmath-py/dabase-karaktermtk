@@ -96,7 +96,7 @@ st.markdown("""
     }
 
     /* REVISI BOX PUTIH: Subtitle kembali ke dalam box putih */
-    .stMarkdown > div[style*="text-align: center; color: #475569;"] {
+    .stMarkdown > div[style*="text-align: center; color: #f8f9fa;"] {
         font-size: 1.15em;
         font-weight: 500;
         margin: 0 auto 30px auto;
