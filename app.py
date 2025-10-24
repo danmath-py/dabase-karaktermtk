@@ -151,7 +151,7 @@ st.markdown("""
         box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
     }
 
-    /* Selectbox (Dropdown) */
+    /* Selectbox (Dropdown) - STYLING UNTUK MATKUL */
     .stSelectbox > div > div {
         background: #f8fafc;
         border: 2px solid #e2e8f0;
@@ -305,10 +305,10 @@ st.markdown("""
 
 # --- 1. TENTUKAN KUIS (PERSONALITY) ---
 
+# --- REVISI 1: Hapus Opsi Netral ---
 PERSONALITY_OPTIONS = {
     "Setuju Banget": 2,
     "Setuju": 1,
-    "Biasa Aja / Netral": 0,
     "Nggak Setuju": -1,
     "Nggak Setuju Banget": -2
 }
@@ -378,7 +378,7 @@ PERSONALITY_QUESTIONS = [
 
 # --- 2. TENTUKAN MASTER SURVEI ---
 
-# --- REVISI TERAKHIR: Ubah semua 'required' menjadi True ---
+# --- REVISI 2 & 3: Ganti 'selectbox' menjadi 'radio' untuk UI yang lebih elok ---
 MASTER_SURVEY_QUESTIONS = [
     # SECTION: GENERAL
     {"id": "nama", "section": "GENERAL", "text": "Nama Lengkap", "type": "text_input", "required": True},
@@ -387,8 +387,8 @@ MASTER_SURVEY_QUESTIONS = [
     {"id": "kab_kota", "section": "GENERAL", "text": "Asal Kabupaten/Kota", "type": "text_input", "required": True},
     {"id": "whatsapp", "section": "GENERAL", "text": "Nomor WhatsApp (Format: wa.me/62...)", "type": "text_input", "required": True},
     {"id": "beasiswa", "section": "GENERAL", "text": "Apakah Kamu Penerima Beasiswa?", "type": "radio", "options": ["Ya", "Tidak"], "required": True},
-    {"id": "daerah_tinggal", "section": "GENERAL", "text": "Daerah tempat tinggal?", "type": "selectbox", "options": ["Babakan Raya", "Babakan Tengah", "Babakan Lebak", "Babakan Lio", "Perwira", "Dramaga Cantik", "Cibanteng", "Lainnya"], "required": True},
-    {"id": "status_tinggal", "section": "GENERAL", "text": "Status tempat tinggal?", "type": "selectbox", "options": ["Kost", "Asrama", "Kontrakan", "Apartkos", "Rumah keluarga", "Lainnya"], "required": True},
+    {"id": "daerah_tinggal", "section": "GENERAL", "text": "Daerah tempat tinggal?", "type": "radio", "options": ["Babakan Raya", "Babakan Tengah", "Babakan Lebak", "Babakan Lio", "Perwira", "Dramaga Cantik", "Cibanteng", "Lainnya"], "required": True}, # Diubah ke radio
+    {"id": "status_tinggal", "section": "GENERAL", "text": "Status tempat tinggal?", "type": "radio", "options": ["Kost", "Asrama", "Kontrakan", "Apartkos", "Rumah keluarga", "Lainnya"], "required": True}, # Diubah ke radio
     
     # SECTION: TIPE MATEMATIKA PART I
     {"id": "tipe_1", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[0]["question"], "type": "personality_quiz", "personality_q_index": 0, "required": True},
@@ -398,12 +398,13 @@ MASTER_SURVEY_QUESTIONS = [
     {"id": "tipe_5", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[4]["question"], "type": "personality_quiz", "personality_q_index": 4, "required": True},
     
     # SECTION: MASUK KE PRODI MATEMATIKA
-    {"id": "jalur_masuk", "section": "MASUK KE PRODI MATEMATIKA", "text": "Jalur Masuk", "type": "selectbox", "options": ["SNBP", "SNBT", "Mandiri", "Jaketos", "BUD", "PIN", "Lainnya"], "required": True},
+    {"id": "jalur_masuk", "section": "MASUK KE PRODI MATEMATIKA", "text": "Jalur Masuk", "type": "radio", "options": ["SNBP", "SNBT", "Mandiri", "Jaketos", "BUD", "PIN", "Lainnya"], "required": True}, # Diubah ke radio
     {"id": "pilihan_ke", "section": "MASUK KE PRODI MATEMATIKA", "text": "Pilihan ke Berapa", "type": "radio", "options": ["1", "2"], "required": True},
     {"id": "alasan_ipb", "section": "MASUK KE PRODI MATEMATIKA", "text": "Alasan Masuk IPB", "type": "text_area", "required": True},
     {"id": "alasan_prodi", "section": "MASUK KE PRODI MATEMATIKA", "text": "Alasan Masuk Prodi Matematika", "type": "text_area", "required": True},
-    {"id": "info_prodi", "section": "MASUK KE PRODI MATEMATIKA", "text": "Dari mana kamu pertama kali mengetahui informasi tentang prodi Matematika IPB?", "type": "selectbox", "options": ["Sosmed", "Guru BK", "Expo Kampus", "Alumni", "Mahasiswa", "Situs web resmi IPB", "Platform pencarian kampus online", "Event IPB", "Lainnya"], "required": True},
-    {"id": "pengaruh_memilih", "section": "MASUK KE PRODI MATEMATIKA", "text": "Siapa yang paling berpengaruh dalam keputusanmu memilih Matematika?", "type": "selectbox", "options": ["Orang tua", "Keluarga", "Guru", "Teman", "Diri sendiri", "Sosmed", "Lainnya"], "required": True},
+    {"id": "info_prodi", "section": "MASUK KE PRODI MATEMATIKA", "text": "Dari mana kamu pertama kali mengetahui informasi tentang prodi Matematika IPB?", "type": "radio", "options": ["Sosmed", "Guru BK", "Expo Kampus", "Alumni", "Mahasiswa", "Situs web resmi IPB", "Platform pencarian kampus online", "Event IPB", "Lainnya"], "required": True}, # Diubah ke radio
+Selesai
+    {"id": "pengaruh_memilih", "section": "MASUK KE PRODI MATEMATIKA", "text": "Siapa yang paling berpengaruh dalam keputusanmu memilih Matematika?", "type": "radio", "options": ["Orang tua", "Keluarga", "Guru", "Teman", "Diri sendiri", "Sosmed", "Lainnya"], "required": True}, # Diubah ke radio
     {"id": "keraguan", "section": "MASUK KE PRODI MATEMATIKA", "text": "Apakah ada keraguan/kekhawatiran sebelum memutuskan masuk prodi Matematika?", "type": "radio", "options": ["Ya", "Tidak"], "required": True},
 
     # SECTION: TIPE MATEMATIKA PART II
@@ -414,11 +415,13 @@ MASTER_SURVEY_QUESTIONS = [
     {"id": "tipe_10", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[9]["question"], "type": "personality_quiz", "personality_q_index": 9, "required": True},
 
     # SECTION: DI MATEMATIKA
+    # Pengecualian: Tetap selectbox karena daftar terlalu panjang (25+ opsi)
     {"id": "matkul_fav", "section": "DI MATEMATIKA", "text": "Matkul Favorit mu di prodi Matematika apa?", "type": "selectbox", "options": ["ALinDas", "GrafAlgo", "KalDu", "KomDas", "MatDis", "PLM", "PDB", "MetStat", "Geonal", "KalTi", "MetNum", "ProgLin", "PTP", "PDP", "AnKom", "Pemod", "PTL", "Prostok", "StatMat", "AnReal", "SA", "MatKrip", "AKM", "SisDim", "PRO"], "required": True},
     {"id": "matkul_susah", "section": "DI MATEMATIKA", "text": "Apa Menurut mu Matkul Tersusah di prodi Matematika?", "type": "selectbox", "options": ["ALinDas", "GrafAlgo", "KalDu", "KomDas", "MatDis", "PLM", "PDB", "MetStat", "Geonal", "KalTi", "MetNum", "ProgLin", "PTP", "PDP", "AnKom", "Pemod", "PTL", "Prostok", "StatMat", "AnReal", "SA", "MatKrip", "AKM", "SisDim", "PRO"], "required": True},
-    {"id": "jam_belajar", "section": "DI MATEMATIKA", "text": "Berapa Jam yang kamu gunakan untuk belajar per minggu?", "type": "selectbox", "options": ["G belajar", "1-2", "3-5", "6-10", "11-15", "16-20", "21-25", "26+"], "required": True},
+    
+    {"id": "jam_belajar", "section": "DI MATEMATIKA", "text": "Berapa Jam yang kamu gunakan untuk belajar per minggu?", "type": "radio", "options": ["G belajar", "1-2", "3-5", "6-10", "11-15", "16-20", "21-25", "26+"], "required": True}, # Diubah ke radio
     {"id": "waktu_luang", "section": "DI MATEMATIKA", "text": "Apa Kegiatan yang kamu lakukan di Waktu Luang? (Boleh pilih lebih dari 1)", "type": "multiselect", "options": ["Belajar", "Nonton Video/Film", "Tidur", "Nongkrong", "Aktif Kegiatan Kampus", "Main Game", "Sosmed", "Lainnya"], "required": True},
-    {"id": "pengeluaran", "section": "DI MATEMATIKA", "text": "Biasanya Pengeluaran per Bulan berapa? (tidak harus jawab)", "type": "selectbox", "options": ["Nggak mau jawab", "<Rp1 000 000", "Rp1 000 000-Rp2 000 000", "Rp2 000 000-Rp2 500 000", "+Rp2 500 000"], "required": True},
+    {"id": "pengeluaran", "section": "DI MATEMATIKA", "text": "Biasanya Pengeluaran per Bulan berapa? (tidak harus jawab)", "type": "radio", "options": ["Nggak mau jawab", "<Rp1 000 000", "Rp1 000 000-Rp2 000 000", "Rp2 000 000-Rp2 500 000", "+Rp2 500 000"], "required": True}, # Diubah ke radio
     {"id": "menyesal", "section": "DI MATEMATIKA", "text": "Apakah menyesal masuk prodi Matematika?", "type": "radio", "options": ["Sangat Menyesal", "Menyesal", "Netral", "Puas", "Sangat Puas"], "required": True},
     
     # SECTION: TIPE MATEMATIKA PART III
@@ -431,7 +434,8 @@ MASTER_SURVEY_QUESTIONS = [
 
 
 # --- 3. HITUNG SKOR MAKSIMUM (untuk plot) ---
-
+# Skor maks/min berubah karena opsi netral (0) hilang
+# Poin maks per soal = 2, Poin min = -2
 max_x = 0
 max_y = 0
 for q in PERSONALITY_QUESTIONS:
@@ -504,7 +508,8 @@ if st.session_state.current_question < total_questions:
 
     # --- Display Question Subheader ---
     st.subheader(q_text)
-    st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+    # --- REVISI 3: Tambah spasi ---
+    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 
     prev_answer = st.session_state.answers.get(q_id)
 
@@ -518,41 +523,30 @@ if st.session_state.current_question < total_questions:
 
     elif q_type == "radio":
         options = q_config["options"]
-        default_index = 0
+        default_index = None # --- REVISI 1: Tidak ada default ---
         if prev_answer in options:
             default_index = options.index(prev_answer)
-        
-        # Save default value on load if not already set
-        if q_id not in st.session_state.answers:
-            st.session_state.answers[q_id] = options[default_index]
             
         st.radio(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
     
     elif q_type == "selectbox":
         options = q_config["options"]
-        default_index = 0
+        default_index = None # Tidak ada default
         if prev_answer in options:
             default_index = options.index(prev_answer)
-
-        # Save default value on load if not already set
-        if q_id not in st.session_state.answers:
-            st.session_state.answers[q_id] = options[default_index]
             
-        st.selectbox(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
+        st.selectbox(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,), placeholder="Pilih salah satu...")
         
     elif q_type == "multiselect":
         options = q_config["options"]
         default_value = prev_answer if (prev_answer and isinstance(prev_answer, list)) else []
-        st.multiselect(q_text, options=options, default=default_value, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
+        st.multiselect(q_text, options=options, default=default_value, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,), placeholder="Pilih satu atau lebih...")
 
     elif q_type == "personality_quiz":
         options = list(PERSONALITY_OPTIONS.keys())
-        default_answer = prev_answer if prev_answer else "Biasa Aja / Netral"
-        default_index = options.index(default_answer)
-        
-        # Save default value on load if not already set
-        if q_id not in st.session_state.answers:
-             st.session_state.answers[q_id] = default_answer
+        default_index = None # --- REVISI 1: Tidak ada default ---
+        if prev_answer in options:
+            default_index = options.index(prev_answer)
 
         st.radio(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
 
@@ -620,8 +614,10 @@ if st.session_state.current_question == total_questions:
             p_q_index = q_config["personality_q_index"]
             p_q = PERSONALITY_QUESTIONS[p_q_index]
             
-            answer_text = st.session_state.answers.get(q_id, "Biasa Aja / Netral")
-            answer_score = PERSONALITY_OPTIONS.get(answer_text, 0)
+            # Default ke 0 jika (karena alasan aneh) tidak ada jawaban, 
+            # meskipun validasi seharusnya mencegah ini
+            answer_text = st.session_state.answers.get(q_id) 
+            answer_score = PERSONALITY_OPTIONS.get(answer_text, 0) 
             
             score_x += answer_score * p_q['weights']['x']
             score_y += answer_score * p_q['weights']['y']
