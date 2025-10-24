@@ -52,7 +52,7 @@ st.set_page_config(
 # --- CUSTOM CSS ---
 st.markdown("""
 <style>
-    /* ... (Import font, etc.) ... */
+    /* Import font */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
     
     * {
@@ -64,12 +64,6 @@ st.markdown("""
         background-attachment: fixed;
     }
     
-    /* --- FIX 1: Dropdown Bug ---
-       We no longer style '.main' which is a base Streamlit class.
-       We create our own '.main-container' to wrap our content.
-       This prevents Streamlit's dropdowns from being 'clipped'
-       by the custom container.
-    */
     .main-container {
         background: #ffffff;
         border-radius: 24px;
@@ -384,6 +378,7 @@ PERSONALITY_QUESTIONS = [
 
 # --- 2. TENTUKAN MASTER SURVEI ---
 
+# --- REVISI TERAKHIR: Ubah semua 'required' menjadi True ---
 MASTER_SURVEY_QUESTIONS = [
     # SECTION: GENERAL
     {"id": "nama", "section": "GENERAL", "text": "Nama Lengkap", "type": "text_input", "required": True},
@@ -396,11 +391,11 @@ MASTER_SURVEY_QUESTIONS = [
     {"id": "status_tinggal", "section": "GENERAL", "text": "Status tempat tinggal?", "type": "selectbox", "options": ["Kost", "Asrama", "Kontrakan", "Apartkos", "Rumah keluarga", "Lainnya"], "required": True},
     
     # SECTION: TIPE MATEMATIKA PART I
-    {"id": "tipe_1", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[0]["question"], "type": "personality_quiz", "personality_q_index": 0, "required": False},
-    {"id": "tipe_2", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[1]["question"], "type": "personality_quiz", "personality_q_index": 1, "required": False},
-    {"id": "tipe_3", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[2]["question"], "type": "personality_quiz", "personality_q_index": 2, "required": False},
-    {"id": "tipe_4", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[3]["question"], "type": "personality_quiz", "personality_q_index": 3, "required": False},
-    {"id": "tipe_5", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[4]["question"], "type": "personality_quiz", "personality_q_index": 4, "required": False},
+    {"id": "tipe_1", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[0]["question"], "type": "personality_quiz", "personality_q_index": 0, "required": True},
+    {"id": "tipe_2", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[1]["question"], "type": "personality_quiz", "personality_q_index": 1, "required": True},
+    {"id": "tipe_3", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[2]["question"], "type": "personality_quiz", "personality_q_index": 2, "required": True},
+    {"id": "tipe_4", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[3]["question"], "type": "personality_quiz", "personality_q_index": 3, "required": True},
+    {"id": "tipe_5", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[4]["question"], "type": "personality_quiz", "personality_q_index": 4, "required": True},
     
     # SECTION: MASUK KE PRODI MATEMATIKA
     {"id": "jalur_masuk", "section": "MASUK KE PRODI MATEMATIKA", "text": "Jalur Masuk", "type": "selectbox", "options": ["SNBP", "SNBT", "Mandiri", "Jaketos", "BUD", "PIN", "Lainnya"], "required": True},
@@ -412,11 +407,11 @@ MASTER_SURVEY_QUESTIONS = [
     {"id": "keraguan", "section": "MASUK KE PRODI MATEMATIKA", "text": "Apakah ada keraguan/kekhawatiran sebelum memutuskan masuk prodi Matematika?", "type": "radio", "options": ["Ya", "Tidak"], "required": True},
 
     # SECTION: TIPE MATEMATIKA PART II
-    {"id": "tipe_6", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[5]["question"], "type": "personality_quiz", "personality_q_index": 5, "required": False},
-    {"id": "tipe_7", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[6]["question"], "type": "personality_quiz", "personality_q_index": 6, "required": False},
-    {"id": "tipe_8", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[7]["question"], "type": "personality_quiz", "personality_q_index": 7, "required": False},
-    {"id": "tipe_9", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[8]["question"], "type": "personality_quiz", "personality_q_index": 8, "required": False},
-    {"id": "tipe_10", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[9]["question"], "type": "personality_quiz", "personality_q_index": 9, "required": False},
+    {"id": "tipe_6", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[5]["question"], "type": "personality_quiz", "personality_q_index": 5, "required": True},
+    {"id": "tipe_7", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[6]["question"], "type": "personality_quiz", "personality_q_index": 6, "required": True},
+    {"id": "tipe_8", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[7]["question"], "type": "personality_quiz", "personality_q_index": 7, "required": True},
+    {"id": "tipe_9", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[8]["question"], "type": "personality_quiz", "personality_q_index": 8, "required": True},
+    {"id": "tipe_10", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[9]["question"], "type": "personality_quiz", "personality_q_index": 9, "required": True},
 
     # SECTION: DI MATEMATIKA
     {"id": "matkul_fav", "section": "DI MATEMATIKA", "text": "Matkul Favorit mu di prodi Matematika apa?", "type": "selectbox", "options": ["ALinDas", "GrafAlgo", "KalDu", "KomDas", "MatDis", "PLM", "PDB", "MetStat", "Geonal", "KalTi", "MetNum", "ProgLin", "PTP", "PDP", "AnKom", "Pemod", "PTL", "Prostok", "StatMat", "AnReal", "SA", "MatKrip", "AKM", "SisDim", "PRO"], "required": True},
@@ -427,12 +422,13 @@ MASTER_SURVEY_QUESTIONS = [
     {"id": "menyesal", "section": "DI MATEMATIKA", "text": "Apakah menyesal masuk prodi Matematika?", "type": "radio", "options": ["Sangat Menyesal", "Menyesal", "Netral", "Puas", "Sangat Puas"], "required": True},
     
     # SECTION: TIPE MATEMATIKA PART III
-    {"id": "tipe_11", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[10]["question"], "type": "personality_quiz", "personality_q_index": 10, "required": False},
-    {"id": "tipe_12", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[11]["question"], "type": "personality_quiz", "personality_q_index": 11, "required": False},
-    {"id": "tipe_13", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[12]["question"], "type": "personality_quiz", "personality_q_index": 12, "required": False},
-    {"id": "tipe_14", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[13]["question"], "type": "personality_quiz", "personality_q_index": 13, "required": False},
-    {"id": "tipe_15", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[14]["question"], "type": "personality_quiz", "personality_q_index": 14, "required": False},
+    {"id": "tipe_11", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[10]["question"], "type": "personality_quiz", "personality_q_index": 10, "required": True},
+    {"id": "tipe_12", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[11]["question"], "type": "personality_quiz", "personality_q_index": 11, "required": True},
+    {"id": "tipe_13", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[12]["question"], "type": "personality_quiz", "personality_q_index": 12, "required": True},
+    {"id": "tipe_14", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[13]["question"], "type": "personality_quiz", "personality_q_index": 13, "required": True},
+    {"id": "tipe_15", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[14]["question"], "type": "personality_quiz", "personality_q_index": 14, "required": True},
 ]
+
 
 # --- 3. HITUNG SKOR MAKSIMUM (untuk plot) ---
 
@@ -458,7 +454,6 @@ def save_answer(q_id):
 
 # --- 5. BUILD STREAMLIT APP ---
 
-# --- FIX 1: Wrap entire app in our custom '.main-container' div ---
 st.markdown("<div class='main-container'>", unsafe_allow_html=True)
 
 st.title("📊 Database Karakteristik Matematika")
@@ -497,7 +492,7 @@ if st.session_state.current_question < total_questions:
     q_type = q_config["type"]
     q_text = q_config["text"]
     q_section = q_config["section"]
-    q_required = q_config.get("required", False) # Get required flag
+    q_required = q_config.get("required", False) 
 
     # --- Display Section Header ---
     if st.session_state.current_question == 0:
@@ -511,7 +506,6 @@ if st.session_state.current_question < total_questions:
     st.subheader(q_text)
     st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
 
-    # Get previous answer for default value
     prev_answer = st.session_state.answers.get(q_id)
 
     # --- Render the correct widget based on type ---
@@ -527,6 +521,11 @@ if st.session_state.current_question < total_questions:
         default_index = 0
         if prev_answer in options:
             default_index = options.index(prev_answer)
+        
+        # Save default value on load if not already set
+        if q_id not in st.session_state.answers:
+            st.session_state.answers[q_id] = options[default_index]
+            
         st.radio(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
     
     elif q_type == "selectbox":
@@ -534,6 +533,11 @@ if st.session_state.current_question < total_questions:
         default_index = 0
         if prev_answer in options:
             default_index = options.index(prev_answer)
+
+        # Save default value on load if not already set
+        if q_id not in st.session_state.answers:
+            st.session_state.answers[q_id] = options[default_index]
+            
         st.selectbox(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
         
     elif q_type == "multiselect":
@@ -545,21 +549,25 @@ if st.session_state.current_question < total_questions:
         options = list(PERSONALITY_OPTIONS.keys())
         default_answer = prev_answer if prev_answer else "Biasa Aja / Netral"
         default_index = options.index(default_answer)
+        
+        # Save default value on load if not already set
+        if q_id not in st.session_state.answers:
+             st.session_state.answers[q_id] = default_answer
+
         st.radio(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
-        if not prev_answer:
-            st.session_state.answers[q_id] = default_answer # Save default if untouched
 
 
-    # --- FIX 2: VALIDATION LOGIC ---
+    # --- VALIDATION LOGIC ---
     is_valid = True
     validation_message = None
     current_value = st.session_state.answers.get(q_id)
 
+    # General "required" check
     if q_required and not current_value:
         is_valid = False
         validation_message = "☝️ Harap isi jawaban lo sebelum lanjut."
     
-    # Specific validations
+    # Specific format validations
     elif q_id == 'nama' and current_value and not current_value.isupper():
         is_valid = False
         validation_message = "Format salah. Nama harus ditulis dengan HURUF KAPITAL."
@@ -759,7 +767,7 @@ if st.session_state.current_question == total_questions:
     mathematicians = {
         "visioner": [
             {"name": "Bernhard Riemann", "desc": "Ahli geometri yang visioner, menciptakan konsep geometri non-Euclidean yang mengubah pemahaman ruang", "era": "1826-1866"},
-            {"name": "Henri Poincaré", "desc": "Polymath yang intuitif, pelopor topologi dan teori chaos dengan intuisi geometri yang luar biasa", "era": "1854-1912"},
+            {"name": "Henri Poincaré", "desc": "Polymath yang intuitif, pelopor topologi dan teori chaos dengan intuisi geometri yang luar biasa", "era": "1854-1Dramaga, Bogor"},
             {"name": "Srinivasa Ramanujan", "desc": "Genius intuitif yang menemukan formula kompleks lewat intuisi murni tanpa bukti formal", "era": "1887-1920"}
         ],
         "arsitek": [
@@ -794,7 +802,7 @@ if st.session_state.current_question == total_questions:
     
     st.markdown("<div style='height: 40px;'></div>", unsafe_allow_html=True)
     
-    # --- FIX 3: ADDED "CABANG MATEMATIKA" SECTION ---
+    # --- 7f. CABANG MATEMATIKA ---
     
     st.markdown("<h3 style='text-align: center; margin-bottom: 30px;'>📚 Cabang Matematika yang Menarik Buat Lo</h3>", unsafe_allow_html=True)
     
@@ -841,12 +849,12 @@ if st.session_state.current_question == total_questions:
     
     st.markdown("---")
     
-    # --- 7f. SAVE RESULTS TO GOOGLE SHEETS ---
+    # --- 7g. SAVE RESULTS TO GOOGLE SHEETS ---
     
     result_data = {}
     result_data["Timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    # Add all survey answers
+    # Loop through MASTER_SURVEY_QUESTIONS to guarantee order and completeness
     for q_config in MASTER_SURVEY_QUESTIONS:
         q_id = q_config["id"]
         answer = st.session_state.answers.get(q_id)
@@ -875,5 +883,4 @@ if st.session_state.current_question == total_questions:
             st.session_state.answers = {}
             st.rerun()
 
-# --- FIX 1: Close the wrapper div ---
 st.markdown("</div>", unsafe_allow_html=True)
