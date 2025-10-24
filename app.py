@@ -483,7 +483,7 @@ st.markdown("<div class='main-container'>", unsafe_allow_html=True)
 st.title("📊 Database Karakteristik Matematika")
 # REVISI BOX PUTIH: Ubah warna text subtitle menjadi gelap (#475569)
 st.markdown(
-    "<div style='text-align: center; color: #475569; font-size: 1.15em; font-weight: 500;'>"
+    "<div style='text-align: center; color: #f8f9fa; font-size: 1.15em; font-weight: 500;'>"
     "Survey ini bertujuan untuk memetakan karakteristik mahasiswa Matematika IPB. "
     "Data yang kamu berikan akan sangat membantu kami. "
     "Di akhir, kamu akan melihat Tipe Matematikawan kamu! 🎯"
@@ -903,7 +903,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 footer_text = "Copyright by Departemen Riset dan Analisis GUMATIKA SSMI IPB 2025"
 st.markdown(
     f"""
-    <div style='text-align: center; color: #f0f2f6; font-size: 0.85em; margin-top: 40px; margin-bottom: 20px;'>
+    <div style='text-align: center; color: #f8f9fa; font-size: 0.85em; margin-top: 40px; margin-bottom: 20px;'>
         {footer_text}
     </div>
     """,
