@@ -15,8 +15,9 @@ def save_to_google_sheets(data_dict):
                  'https://www.googleapis.com/auth/drive']
         
         # Load credentials from Streamlit secrets
+        # --- FIX 1: Use 'scopes=scope' keyword argument ---
         credentials = Credentials.from_service_account_info(
-            st.secrets["gcp_service_account"], scope
+            st.secrets["gcp_service_account"], scopes=scope
         )
         
         # Authorize and open spreadsheet
@@ -29,21 +30,12 @@ def save_to_google_sheets(data_dict):
         
         new_headers = list(data_dict.keys())
         
-        # If sheet is empty or headers don't match, update headers
         if len(existing_headers) == 0:
             sheet.append_row(new_headers)
         elif existing_headers[0] != new_headers:
-             # This is a simple check. For complex apps, you might want a more
-             # robust header migration, but for this survey, clearing and
-             # re-adding headers on change is acceptable.
-             # Or, just append new columns if needed.
-             # For simplicity, we'll just ensure the first row is headers.
-             # A more robust way is to check if all new_headers exist,
-             # but we'll stick to the original logic of adding if empty.
-             pass # Assume headers are "good enough" if not empty
+             pass 
 
         # Append new row
-        # Convert list values (from multiselect) to comma-separated strings
         values = []
         for header in new_headers:
             value = data_dict.get(header, "") # Get value
@@ -61,7 +53,7 @@ def save_to_google_sheets(data_dict):
 
 # --- PAGE CONFIG ---
 st.set_page_config(
-    page_title="Database Karakteristik Matematika", # <-- UPDATED
+    page_title="Database Karakteristik Matematika",
     page_icon="🧮",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -70,6 +62,7 @@ st.set_page_config(
 # --- CUSTOM CSS WITH IMPROVED COLOR THEORY & NEW WIDGETS ---
 st.markdown("""
 <style>
+    /* ... (All your existing CSS) ... */
     /* Import font */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
     
@@ -232,7 +225,8 @@ st.markdown("""
         cursor: not-allowed !important;
     }
     
-    /* Progress bar - Matching theme */
+    /* ... (Rest of your CSS) ... */
+     /* Progress bar - Matching theme */
     .stProgress > div > div > div {
         background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%) !important;
         border-radius: 10px;
@@ -334,6 +328,7 @@ PERSONALITY_OPTIONS = {
 
 # Original 15 personality questions (weights are used for calculation)
 PERSONALITY_QUESTIONS = [
+    # ... (Your 15 questions remain unchanged) ...
     {
         "question": "Matematika itu paling keren pas bisa dipakai buat mecahin masalah di dunia nyata.",
         "weights": {'x': 1.5, 'y': 0}
@@ -400,6 +395,7 @@ PERSONALITY_QUESTIONS = [
 
 # This list now controls the entire 37-question survey
 MASTER_SURVEY_QUESTIONS = [
+    # ... (Your 37 questions remain unchanged) ...
     # --- SECTION: GENERAL ---
     {"id": "nama", "section": "GENERAL", "text": "Nama Lengkap", "type": "text_input"},
     {"id": "nim", "section": "GENERAL", "text": "NIM", "type": "text_input"},
@@ -465,9 +461,19 @@ if 'current_question' not in st.session_state:
     st.session_state.current_question = 0
     st.session_state.answers = {}
 
+# --- FIX 2: Add a callback function to save answers immediately ---
+def save_answer(q_id):
+    """
+    Callback function to save the widget's state to our 'answers' dictionary.
+    This fires *before* the script reruns.
+    """
+    if q_id in st.session_state:
+        st.session_state.answers[q_id] = st.session_state[q_id]
+
+
 # --- 5. BUILD STREAMLIT APP ---
 
-st.title("📊 Database Karakteristik Matematika") # <-- UPDATED
+st.title("📊 Database Karakteristik Matematika")
 st.markdown(
     "<div style='text-align: center; color: #f8fafc; font-size: 1.15em; margin-bottom: 30px; font-weight: 500;'>"
     "Survey ini bertujuan untuk memetakan karakteristik mahasiswa Matematika IPB. "
@@ -516,21 +522,23 @@ if st.session_state.current_question < total_questions:
     st.subheader(q_text)
     st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
 
-    answer = None
     is_valid = True
     
     # Get previous answer for default value
+    # This now works because save_answer() updated it on the last interaction
     prev_answer = st.session_state.answers.get(q_id)
 
     # --- Render the correct widget based on type ---
+    # --- FIX 2: Add 'on_change' to all widgets ---
+    
     if q_type == "text_input":
-        answer = st.text_input(q_text, value=prev_answer if prev_answer else "", label_visibility="collapsed", key=q_id)
-        if not answer:
+        st.text_input(q_text, value=prev_answer if prev_answer else "", label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
+        if not st.session_state.answers.get(q_id): # Validate from state
             is_valid = False
             
     elif q_type == "text_area":
-        answer = st.text_area(q_text, value=prev_answer if prev_answer else "", label_visibility="collapsed", key=q_id)
-        if not answer:
+        st.text_area(q_text, value=prev_answer if prev_answer else "", label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
+        if not st.session_state.answers.get(q_id): # Validate from state
             is_valid = False
 
     elif q_type == "radio":
@@ -538,31 +546,34 @@ if st.session_state.current_question < total_questions:
         default_index = 0
         if prev_answer in options:
             default_index = options.index(prev_answer)
-        answer = st.radio(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id)
+        st.radio(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
     
     elif q_type == "selectbox":
         options = q_config["options"]
         default_index = 0
         if prev_answer in options:
             default_index = options.index(prev_answer)
-        answer = st.selectbox(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id)
+        st.selectbox(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
         
     elif q_type == "multiselect":
         options = q_config["options"]
-        default_value = prev_answer if prev_answer else []
-        answer = st.multiselect(q_text, options=options, default=default_value, label_visibility="collapsed", key=q_id)
-        if not answer:
+        default_value = prev_answer if (prev_answer and isinstance(prev_answer, list)) else []
+        st.multiselect(q_text, options=options, default=default_value, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
+        if not st.session_state.answers.get(q_id): # Validate from state
             is_valid = False
 
     elif q_type == "personality_quiz":
         options = list(PERSONALITY_OPTIONS.keys())
         default_answer = prev_answer if prev_answer else "Biasa Aja / Netral"
         default_index = options.index(default_answer)
-        answer = st.radio(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id)
+        st.radio(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
+        # Ensure default is saved if user doesn't touch it
+        if not prev_answer:
+            st.session_state.answers[q_id] = default_answer
 
-    # Always save the current answer to session state
-    if answer is not None:
-        st.session_state.answers[q_id] = answer
+    # --- FIX 2: Remove the old (and now redundant) save block ---
+    # if answer is not None:
+    #     st.session_state.answers[q_id] = answer
 
     # --- Validation Warning ---
     if not is_valid:
@@ -591,6 +602,10 @@ if st.session_state.current_question < total_questions:
 # --- 7. PROSES HASIL ---
 
 if st.session_state.current_question == total_questions:
+    
+    # ... (All the results page logic, plot, and descriptions remain unchanged) ...
+    # ... (This section is long, so I'm collapsing it for readability) ...
+    
     st.markdown("---")
     
     # --- 7a. Calculate Personality Score ---
@@ -744,8 +759,6 @@ if st.session_state.current_question == total_questions:
     st.markdown("---")
     
     # --- 7e. MATEMATIKAWAN TERKENAL & CABANG MATEMATIKA ---
-    # This section is optional, you can keep it or remove it.
-    # I will keep it as it was part of the original, good result page.
     
     st.markdown("<h3 style='text-align: center; margin-bottom: 30px; margin-top: 40px;'>👥 Matematikawan Terkenal yang Cocok dengan Lo</h3>", unsafe_allow_html=True)
     
@@ -757,7 +770,7 @@ if st.session_state.current_question == total_questions:
         ],
         "arsitek": [
             {"name": "David Hilbert", "desc": "Arsitek sistem aksioma modern, menetapkan fondasi matematika dengan 23 masalah terkenalnya", "era": "1862-1943"},
-            {"name": "Emmy Noether", "desc": "Pembangun teori aljabar abstrak dengan pendekatan sistematis dan formal yang elegan", "era": "1882-1935"},
+            {"name": "Emmy Noether", "desc": "Pembangun teori aljabar abstrak dengan pendekatan sistematis dan formal yang elegan", "era": "1882-1Dramaga, Bogor"},
             {"name": "André Weil", "desc": "Arsitek teori bilangan modern dengan pendekatan formal dan struktural yang sangat presisi", "era": "1906-1998"}
         ],
         "pemodel": [
@@ -785,9 +798,6 @@ if st.session_state.current_question == total_questions:
                 unsafe_allow_html=True
             )
     
-    # (Optional: You can also include the "Cabang Matematika" section here if you want)
-    # ...
-
     st.markdown("---")
     
     # --- 7f. SAVE RESULTS TO GOOGLE SHEETS ---
@@ -796,7 +806,7 @@ if st.session_state.current_question == total_questions:
     result_data = {}
     result_data["Timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    # Add all survey answers, converting lists to strings
+    # Add all survey answers from our dictionary
     for q_id, answer in st.session_state.answers.items():
         if isinstance(answer, list):
             result_data[q_id] = ", ".join(answer) # Convert multiselect list
