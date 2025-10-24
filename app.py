@@ -83,21 +83,22 @@ st.markdown("""
         margin: 40px auto;
     }
     
-    /* Title styling (di luar kotak putih) */
+    /* REVISI BOX PUTIH: Title kembali ke dalam box putih */
     h1 {
         text-align: center;
-        color: #ffffff !important;
+        color: #1e293b !important; /* Warna gelap */
         font-size: 3.5em !important;
         font-weight: 900 !important;
-        margin-top: 2rem !important; /* Beri jarak dari banner */
+        margin-top: 0 !important; /* Hapus margin atas */
         margin-bottom: 10px !important;
-        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         letter-spacing: -1px;
     }
 
-    /* Subtitle styling (di luar kotak putih) */
-    .stMarkdown > div[style*="text-align: center; color: #f8fafc;"] {
-        max-width: 900px;
+    /* REVISI BOX PUTIH: Subtitle kembali ke dalam box putih */
+    .stMarkdown > div[style*="text-align: center; color: #475569;"] {
+        font-size: 1.15em;
+        font-weight: 500;
         margin: 0 auto 30px auto;
     }
     
@@ -468,17 +469,21 @@ def save_answer(q_id):
 
 # --- 5. BUILD STREAMLIT APP ---
 
-# --- REVISI 1: Tambahkan banner di sini ---
-# Pastikan file 'banner.png' ada di folder yang sama dengan streamlit_app.py
+# REVISI 1: Tambahkan banner di sini
 try:
-    st.image("banner.png", use_column_width='always')
+    # REVISI DEPRECATION: Ganti 'use_column_width' dengan 'use_container_width'
+    st.image("banner.png", use_container_width=True) 
 except Exception as e:
     st.warning(f"Tidak dapat memuat banner. Pastikan 'banner.png' ada di root repo. Error: {e}")
 
-# Title dan Subtitle sekarang di luar .main-container
+
+# REVISI BOX PUTIH: Mulai .main-container SEBELUM title
+st.markdown("<div class='main-container'>", unsafe_allow_html=True)
+
 st.title("📊 Database Karakteristik Matematika")
+# REVISI BOX PUTIH: Ubah warna text subtitle menjadi gelap (#475569)
 st.markdown(
-    "<div style='text-align: center; color: #f8fafc; font-size: 1.15em; font-weight: 500;'>"
+    "<div style='text-align: center; color: #475569; font-size: 1.15em; font-weight: 500;'>"
     "Survey ini bertujuan untuk memetakan karakteristik mahasiswa Matematika IPB. "
     "Data yang kamu berikan akan sangat membantu kami. "
     "Di akhir, kamu akan melihat Tipe Matematikawan kamu! 🎯"
@@ -486,8 +491,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Buka .main-container HANYA untuk konten kuis (kotak putih)
-st.markdown("<div class='main-container'>", unsafe_allow_html=True)
+st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
 
 # Progress section
 total_questions = len(MASTER_SURVEY_QUESTIONS)
