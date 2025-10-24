@@ -60,7 +60,7 @@ st.markdown("""
     }
     
     .stApp {
-        background: linear-gradient(to right, #a02c2c, #c0392b);
+        background: linear-gradient(to right, #881919, #761b1a);
         background-attachment: fixed;
     }
     
