@@ -77,7 +77,7 @@ st.markdown("""
     .main-container {
         background: #ffffff;
         border-radius: 24px;
-        padding: 48px;
+        padding: 0px;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
         max-width: 900px;
         margin: 40px auto;
