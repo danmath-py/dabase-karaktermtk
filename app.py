@@ -265,7 +265,7 @@ st.markdown("""
     
     /* Section Headers */
     h2 {
-        color: #1e293b !important;
+        color: #f8f9fa !important;
         font-weight: 800 !important;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         border-bottom: 3px solid #6366f1;
