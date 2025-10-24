@@ -403,7 +403,6 @@ MASTER_SURVEY_QUESTIONS = [
     {"id": "alasan_ipb", "section": "MASUK KE PRODI MATEMATIKA", "text": "Alasan Masuk IPB", "type": "text_area", "required": True},
     {"id": "alasan_prodi", "section": "MASUK KE PRODI MATEMATIKA", "text": "Alasan Masuk Prodi Matematika", "type": "text_area", "required": True},
     {"id": "info_prodi", "section": "MASUK KE PRODI MATEMATIKA", "text": "Dari mana kamu pertama kali mengetahui informasi tentang prodi Matematika IPB?", "type": "radio", "options": ["Sosmed", "Guru BK", "Expo Kampus", "Alumni", "Mahasiswa", "Situs web resmi IPB", "Platform pencarian kampus online", "Event IPB", "Lainnya"], "required": True}, # Diubah ke radio
-Selesai
     {"id": "pengaruh_memilih", "section": "MASUK KE PRODI MATEMATIKA", "text": "Siapa yang paling berpengaruh dalam keputusanmu memilih Matematika?", "type": "radio", "options": ["Orang tua", "Keluarga", "Guru", "Teman", "Diri sendiri", "Sosmed", "Lainnya"], "required": True}, # Diubah ke radio
     {"id": "keraguan", "section": "MASUK KE PRODI MATEMATIKA", "text": "Apakah ada keraguan/kekhawatiran sebelum memutuskan masuk prodi Matematika?", "type": "radio", "options": ["Ya", "Tidak"], "required": True},
 
