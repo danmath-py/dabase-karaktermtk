@@ -10,42 +10,32 @@ from google.oauth2.service_account import Credentials
 def save_to_google_sheets(data_dict):
     """Save quiz results to Google Sheets"""
     try:
-        # Setup credentials
         scope = ['https://spreadsheets.google.com/feeds',
                  'https://www.googleapis.com/auth/drive']
         
-        # Load credentials from Streamlit secrets
-        # --- FIX 1: Use 'scopes=scope' keyword argument ---
         credentials = Credentials.from_service_account_info(
             st.secrets["gcp_service_account"], scopes=scope
         )
         
-        # Authorize and open spreadsheet
         client = gspread.authorize(credentials)
         spreadsheet_url = st.secrets["google_sheets"]["spreadsheet_url"]
         sheet = client.open_by_url(spreadsheet_url).sheet1
         
-        # Get existing data to check if header exists
         existing_headers = sheet.get_all_values()
-        
         new_headers = list(data_dict.keys())
         
         if len(existing_headers) == 0:
             sheet.append_row(new_headers)
-        elif existing_headers[0] != new_headers:
-             pass 
-
-        # Append new row
+        
         values = []
         for header in new_headers:
-            value = data_dict.get(header, "") # Get value
+            value = data_dict.get(header, "")
             if isinstance(value, list):
-                values.append(", ".join(value)) # Join list with commas
+                values.append(", ".join(value))
             else:
                 values.append(value)
                 
         sheet.append_row(values)
-        
         return True
     except Exception as e:
         st.error(f"Error saving to Google Sheets: {str(e)}")
@@ -59,24 +49,37 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- CUSTOM CSS WITH IMPROVED COLOR THEORY & NEW WIDGETS ---
+# --- CUSTOM CSS ---
 st.markdown("""
 <style>
-    /* ... (All your existing CSS) ... */
-    /* Import font */
+    /* ... (Import font, etc.) ... */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
     
     * {
         font-family: 'Inter', sans-serif;
     }
     
-    /* Main background - Softer gradient */
     .stApp {
         background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
         background-attachment: fixed;
     }
     
-    /* Title styling - Better readability */
+    /* --- FIX 1: Dropdown Bug ---
+       We no longer style '.main' which is a base Streamlit class.
+       We create our own '.main-container' to wrap our content.
+       This prevents Streamlit's dropdowns from being 'clipped'
+       by the custom container.
+    */
+    .main-container {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 48px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        max-width: 900px;
+        margin: 40px auto;
+    }
+    
+    /* Title styling */
     h1 {
         text-align: center;
         color: #ffffff !important;
@@ -86,18 +89,8 @@ st.markdown("""
         text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         letter-spacing: -1px;
     }
-    
-    /* Main container - Cleaner white */
-    .main {
-        background: #ffffff;
-        border-radius: 24px;
-        padding: 48px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-        max-width: 900px;
-        margin: 40px auto;
-    }
-    
-    /* Question styling - Complementary color */
+
+    /* Question styling */
     .stSubheader {
         font-size: 1.4em !important;
         font-weight: 700 !important;
@@ -110,7 +103,7 @@ st.markdown("""
         box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1);
     }
     
-    /* Radio button styling - Modern cards */
+    /* Radio button styling */
     .stRadio > label {
         background: #f8fafc;
         padding: 16px 20px !important;
@@ -130,8 +123,6 @@ st.markdown("""
         border-color: transparent;
         box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
     }
-
-    /* --- NEW WIDGET STYLING --- */
 
     /* Text Input */
     .stTextInput > div > div > input {
@@ -171,7 +162,7 @@ st.markdown("""
         background: #f8fafc;
         border: 2px solid #e2e8f0;
         border-radius: 12px !important;
-        padding: 8px 12px !important; /* Padding is different for selectbox */
+        padding: 8px 12px !important;
         font-size: 1.1em !important;
         font-weight: 600 !important;
         color: #334155 !important;
@@ -196,9 +187,8 @@ st.markdown("""
         border-color: #6366f1;
         box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
     }
-    /* --- END NEW WIDGET STYLING --- */
     
-    /* Button styling - Vibrant but balanced */
+    /* Button styling */
     .stButton > button {
         background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
         color: white !important;
@@ -225,8 +215,7 @@ st.markdown("""
         cursor: not-allowed !important;
     }
     
-    /* ... (Rest of your CSS) ... */
-     /* Progress bar - Matching theme */
+    /* Progress bar */
     .stProgress > div > div > div {
         background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%) !important;
         border-radius: 10px;
@@ -237,7 +226,7 @@ st.markdown("""
         border-radius: 10px;
     }
     
-    /* Success message - Harmonious green */
+    /* Success message */
     .stSuccess {
         background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
         border-left: 6px solid #10b981 !important;
@@ -246,8 +235,16 @@ st.markdown("""
         color: #064e3b !important;
         font-weight: 600 !important;
     }
+
+    /* Error message (for validation) */
+    .stError {
+        background: linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%) !important;
+        border-left: 6px solid #f43f5e !important;
+        border-radius: 12px !important;
+        color: #881337 !important;
+    }
     
-    /* Header text - Better hierarchy */
+    /* Header text */
     .stMarkdown h3 {
         color: #1e293b !important;
         font-weight: 800 !important;
@@ -263,7 +260,7 @@ st.markdown("""
         padding-bottom: 10px;
     }
     
-    /* Divider - Subtle */
+    /* Divider */
     hr {
         border: 0 !important;
         height: 2px !important;
@@ -271,7 +268,7 @@ st.markdown("""
         margin: 32px 0 !important;
     }
     
-    /* Info box - Cohesive colors */
+    /* Info box */
     .stInfo {
         background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
         border-left: 6px solid #3b82f6 !important;
@@ -279,7 +276,7 @@ st.markdown("""
         color: #1e3a8a !important;
     }
     
-    /* Score cards enhancement */
+    /* Score cards */
     .score-card {
         background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
         padding: 28px;
@@ -289,12 +286,10 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
         transition: transform 0.3s ease;
     }
-    
     .score-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 24px rgba(14, 165, 233, 0.25);
     }
-    
     .score-label {
         color: #475569;
         font-size: 0.85em;
@@ -303,7 +298,6 @@ st.markdown("""
         text-transform: uppercase;
         margin-bottom: 12px;
     }
-    
     .score-value {
         font-size: 3em;
         font-weight: 900;
@@ -317,7 +311,6 @@ st.markdown("""
 
 # --- 1. TENTUKAN KUIS (PERSONALITY) ---
 
-# Options for the personality quiz questions
 PERSONALITY_OPTIONS = {
     "Setuju Banget": 2,
     "Setuju": 1,
@@ -326,9 +319,7 @@ PERSONALITY_OPTIONS = {
     "Nggak Setuju Banget": -2
 }
 
-# Original 15 personality questions (weights are used for calculation)
 PERSONALITY_QUESTIONS = [
-    # ... (Your 15 questions remain unchanged) ...
     {
         "question": "Matematika itu paling keren pas bisa dipakai buat mecahin masalah di dunia nyata.",
         "weights": {'x': 1.5, 'y': 0}
@@ -393,56 +384,54 @@ PERSONALITY_QUESTIONS = [
 
 # --- 2. TENTUKAN MASTER SURVEI ---
 
-# This list now controls the entire 37-question survey
 MASTER_SURVEY_QUESTIONS = [
-    # ... (Your 37 questions remain unchanged) ...
-    # --- SECTION: GENERAL ---
-    {"id": "nama", "section": "GENERAL", "text": "Nama Lengkap", "type": "text_input"},
-    {"id": "nim", "section": "GENERAL", "text": "NIM", "type": "text_input"},
-    {"id": "provinsi", "section": "GENERAL", "text": "Asal Provinsi", "type": "text_input"},
-    {"id": "kab_kota", "section": "GENERAL", "text": "Asal Kabupaten/Kota", "type": "text_input"},
-    {"id": "whatsapp", "section": "GENERAL", "text": "Nomor WhatsApp", "type": "text_input"},
-    {"id": "beasiswa", "section": "GENERAL", "text": "Apakah Kamu Penerima Beasiswa?", "type": "radio", "options": ["Ya", "Tidak"]},
-    {"id": "daerah_tinggal", "section": "GENERAL", "text": "Daerah tempat tinggal?", "type": "selectbox", "options": ["Babakan Raya", "Babakan Tengah", "Babakan Lebak", "Babakan Lio", "Perwira", "Dramaga Cantik", "Cibanteng", "Lainnya"]},
-    {"id": "status_tinggal", "section": "GENERAL", "text": "Status tempat tinggal?", "type": "selectbox", "options": ["Kost", "Asrama", "Kontrakan", "Apartkos", "Rumah keluarga", "Lainnya"]},
+    # SECTION: GENERAL
+    {"id": "nama", "section": "GENERAL", "text": "Nama Lengkap", "type": "text_input", "required": True},
+    {"id": "nim", "section": "GENERAL", "text": "NIM", "type": "text_input", "required": True},
+    {"id": "provinsi", "section": "GENERAL", "text": "Asal Provinsi", "type": "text_input", "required": True},
+    {"id": "kab_kota", "section": "GENERAL", "text": "Asal Kabupaten/Kota", "type": "text_input", "required": True},
+    {"id": "whatsapp", "section": "GENERAL", "text": "Nomor WhatsApp (Format: wa.me/62...)", "type": "text_input", "required": True},
+    {"id": "beasiswa", "section": "GENERAL", "text": "Apakah Kamu Penerima Beasiswa?", "type": "radio", "options": ["Ya", "Tidak"], "required": True},
+    {"id": "daerah_tinggal", "section": "GENERAL", "text": "Daerah tempat tinggal?", "type": "selectbox", "options": ["Babakan Raya", "Babakan Tengah", "Babakan Lebak", "Babakan Lio", "Perwira", "Dramaga Cantik", "Cibanteng", "Lainnya"], "required": True},
+    {"id": "status_tinggal", "section": "GENERAL", "text": "Status tempat tinggal?", "type": "selectbox", "options": ["Kost", "Asrama", "Kontrakan", "Apartkos", "Rumah keluarga", "Lainnya"], "required": True},
     
-    # --- SECTION: TIPE MATEMATIKA PART I ---
-    {"id": "tipe_1", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[0]["question"], "type": "personality_quiz", "personality_q_index": 0},
-    {"id": "tipe_2", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[1]["question"], "type": "personality_quiz", "personality_q_index": 1},
-    {"id": "tipe_3", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[2]["question"], "type": "personality_quiz", "personality_q_index": 2},
-    {"id": "tipe_4", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[3]["question"], "type": "personality_quiz", "personality_q_index": 3},
-    {"id": "tipe_5", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[4]["question"], "type": "personality_quiz", "personality_q_index": 4},
+    # SECTION: TIPE MATEMATIKA PART I
+    {"id": "tipe_1", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[0]["question"], "type": "personality_quiz", "personality_q_index": 0, "required": False},
+    {"id": "tipe_2", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[1]["question"], "type": "personality_quiz", "personality_q_index": 1, "required": False},
+    {"id": "tipe_3", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[2]["question"], "type": "personality_quiz", "personality_q_index": 2, "required": False},
+    {"id": "tipe_4", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[3]["question"], "type": "personality_quiz", "personality_q_index": 3, "required": False},
+    {"id": "tipe_5", "section": "TIPE MATEMATIKA PART I", "text": PERSONALITY_QUESTIONS[4]["question"], "type": "personality_quiz", "personality_q_index": 4, "required": False},
     
-    # --- SECTION: MASUK KE PRODI MATEMATIKA ---
-    {"id": "jalur_masuk", "section": "MASUK KE PRODI MATEMATIKA", "text": "Jalur Masuk", "type": "selectbox", "options": ["SNBP", "SNBT", "Mandiri", "Jaketos", "BUD", "PIN", "Lainnya"]},
-    {"id": "pilihan_ke", "section": "MASUK KE PRODI MATEMATIKA", "text": "Pilihan ke Berapa", "type": "radio", "options": ["1", "2"]},
-    {"id": "alasan_ipb", "section": "MASUK KE PRODI MATEMATIKA", "text": "Alasan Masuk IPB", "type": "text_area"},
-    {"id": "alasan_prodi", "section": "MASUK KE PRODI MATEMATIKA", "text": "Alasan Masuk Prodi Matematika", "type": "text_area"},
-    {"id": "info_prodi", "section": "MASUK KE PRODI MATEMATIKA", "text": "Dari mana kamu pertama kali mengetahui informasi tentang prodi Matematika IPB?", "type": "selectbox", "options": ["Sosmed", "Guru BK", "Expo Kampus", "Alumni", "Mahasiswa", "Situs web resmi IPB", "Platform pencarian kampus online", "Event IPB", "Lainnya"]},
-    {"id": "pengaruh_memilih", "section": "MASUK KE PRODI MATEMATIKA", "text": "Siapa yang paling berpengaruh dalam keputusanmu memilih Matematika?", "type": "selectbox", "options": ["Orang tua", "Keluarga", "Guru", "Teman", "Diri sendiri", "Sosmed", "Lainnya"]},
-    {"id": "keraguan", "section": "MASUK KE PRODI MATEMATIKA", "text": "Apakah ada keraguan/kekhawatiran sebelum memutuskan masuk prodi Matematika?", "type": "radio", "options": ["Ya", "Tidak"]},
+    # SECTION: MASUK KE PRODI MATEMATIKA
+    {"id": "jalur_masuk", "section": "MASUK KE PRODI MATEMATIKA", "text": "Jalur Masuk", "type": "selectbox", "options": ["SNBP", "SNBT", "Mandiri", "Jaketos", "BUD", "PIN", "Lainnya"], "required": True},
+    {"id": "pilihan_ke", "section": "MASUK KE PRODI MATEMATIKA", "text": "Pilihan ke Berapa", "type": "radio", "options": ["1", "2"], "required": True},
+    {"id": "alasan_ipb", "section": "MASUK KE PRODI MATEMATIKA", "text": "Alasan Masuk IPB", "type": "text_area", "required": True},
+    {"id": "alasan_prodi", "section": "MASUK KE PRODI MATEMATIKA", "text": "Alasan Masuk Prodi Matematika", "type": "text_area", "required": True},
+    {"id": "info_prodi", "section": "MASUK KE PRODI MATEMATIKA", "text": "Dari mana kamu pertama kali mengetahui informasi tentang prodi Matematika IPB?", "type": "selectbox", "options": ["Sosmed", "Guru BK", "Expo Kampus", "Alumni", "Mahasiswa", "Situs web resmi IPB", "Platform pencarian kampus online", "Event IPB", "Lainnya"], "required": True},
+    {"id": "pengaruh_memilih", "section": "MASUK KE PRODI MATEMATIKA", "text": "Siapa yang paling berpengaruh dalam keputusanmu memilih Matematika?", "type": "selectbox", "options": ["Orang tua", "Keluarga", "Guru", "Teman", "Diri sendiri", "Sosmed", "Lainnya"], "required": True},
+    {"id": "keraguan", "section": "MASUK KE PRODI MATEMATIKA", "text": "Apakah ada keraguan/kekhawatiran sebelum memutuskan masuk prodi Matematika?", "type": "radio", "options": ["Ya", "Tidak"], "required": True},
 
-    # --- SECTION: TIPE MATEMATIKA PART II ---
-    {"id": "tipe_6", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[5]["question"], "type": "personality_quiz", "personality_q_index": 5},
-    {"id": "tipe_7", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[6]["question"], "type": "personality_quiz", "personality_q_index": 6},
-    {"id": "tipe_8", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[7]["question"], "type": "personality_quiz", "personality_q_index": 7},
-    {"id": "tipe_9", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[8]["question"], "type": "personality_quiz", "personality_q_index": 8},
-    {"id": "tipe_10", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[9]["question"], "type": "personality_quiz", "personality_q_index": 9},
+    # SECTION: TIPE MATEMATIKA PART II
+    {"id": "tipe_6", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[5]["question"], "type": "personality_quiz", "personality_q_index": 5, "required": False},
+    {"id": "tipe_7", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[6]["question"], "type": "personality_quiz", "personality_q_index": 6, "required": False},
+    {"id": "tipe_8", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[7]["question"], "type": "personality_quiz", "personality_q_index": 7, "required": False},
+    {"id": "tipe_9", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[8]["question"], "type": "personality_quiz", "personality_q_index": 8, "required": False},
+    {"id": "tipe_10", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[9]["question"], "type": "personality_quiz", "personality_q_index": 9, "required": False},
 
-    # --- SECTION: DI MATEMATIKA ---
-    {"id": "matkul_fav", "section": "DI MATEMATIKA", "text": "Matkul Favorit mu di prodi Matematika apa?", "type": "selectbox", "options": ["ALinDas", "GrafAlgo", "KalDu", "KomDas", "MatDis", "PLM", "PDB", "MetStat", "Geonal", "KalTi", "MetNum", "ProgLin", "PTP", "PDP", "AnKom", "Pemod", "PTL", "Prostok", "StatMat", "AnReal", "SA", "MatKrip", "AKM", "SisDim", "PRO"]},
-    {"id": "matkul_susah", "section": "DI MATEMATIKA", "text": "Apa Menurut mu Matkul Tersusah di prodi Matematika?", "type": "selectbox", "options": ["ALinDas", "GrafAlgo", "KalDu", "KomDas", "MatDis", "PLM", "PDB", "MetStat", "Geonal", "KalTi", "MetNum", "ProgLin", "PTP", "PDP", "AnKom", "Pemod", "PTL", "Prostok", "StatMat", "AnReal", "SA", "MatKrip", "AKM", "SisDim", "PRO"]},
-    {"id": "jam_belajar", "section": "DI MATEMATIKA", "text": "Berapa Jam yang kamu gunakan untuk belajar per minggu?", "type": "selectbox", "options": ["G belajar", "1-2", "3-5", "6-10", "11-15", "16-20", "21-25", "26+"]},
-    {"id": "waktu_luang", "section": "DI MATEMATIKA", "text": "Apa Kegiatan yang kamu lakukan di Waktu Luang? (Boleh pilih lebih dari 1)", "type": "multiselect", "options": ["Belajar", "Nonton Video/Film", "Tidur", "Nongkrong", "Aktif Kegiatan Kampus", "Main Game", "Sosmed", "Lainnya"]},
-    {"id": "pengeluaran", "section": "DI MATEMATIKA", "text": "Biasanya Pengeluaran per Bulan berapa? (tidak harus jawab)", "type": "selectbox", "options": ["Nggak mau jawab", "<Rp1 000 000", "Rp1 000 000-Rp2 000 000", "Rp2 000 000-Rp2 500 000", "+Rp2 500 000"]},
-    {"id": "menyesal", "section": "DI MATEMATIKA", "text": "Apakah menyesal masuk prodi Matematika?", "type": "radio", "options": ["Sangat Menyesal", "Menyesal", "Netral", "Puas", "Sangat Puas"]},
+    # SECTION: DI MATEMATIKA
+    {"id": "matkul_fav", "section": "DI MATEMATIKA", "text": "Matkul Favorit mu di prodi Matematika apa?", "type": "selectbox", "options": ["ALinDas", "GrafAlgo", "KalDu", "KomDas", "MatDis", "PLM", "PDB", "MetStat", "Geonal", "KalTi", "MetNum", "ProgLin", "PTP", "PDP", "AnKom", "Pemod", "PTL", "Prostok", "StatMat", "AnReal", "SA", "MatKrip", "AKM", "SisDim", "PRO"], "required": True},
+    {"id": "matkul_susah", "section": "DI MATEMATIKA", "text": "Apa Menurut mu Matkul Tersusah di prodi Matematika?", "type": "selectbox", "options": ["ALinDas", "GrafAlgo", "KalDu", "KomDas", "MatDis", "PLM", "PDB", "MetStat", "Geonal", "KalTi", "MetNum", "ProgLin", "PTP", "PDP", "AnKom", "Pemod", "PTL", "Prostok", "StatMat", "AnReal", "SA", "MatKrip", "AKM", "SisDim", "PRO"], "required": True},
+    {"id": "jam_belajar", "section": "DI MATEMATIKA", "text": "Berapa Jam yang kamu gunakan untuk belajar per minggu?", "type": "selectbox", "options": ["G belajar", "1-2", "3-5", "6-10", "11-15", "16-20", "21-25", "26+"], "required": True},
+    {"id": "waktu_luang", "section": "DI MATEMATIKA", "text": "Apa Kegiatan yang kamu lakukan di Waktu Luang? (Boleh pilih lebih dari 1)", "type": "multiselect", "options": ["Belajar", "Nonton Video/Film", "Tidur", "Nongkrong", "Aktif Kegiatan Kampus", "Main Game", "Sosmed", "Lainnya"], "required": True},
+    {"id": "pengeluaran", "section": "DI MATEMATIKA", "text": "Biasanya Pengeluaran per Bulan berapa? (tidak harus jawab)", "type": "selectbox", "options": ["Nggak mau jawab", "<Rp1 000 000", "Rp1 000 000-Rp2 000 000", "Rp2 000 000-Rp2 500 000", "+Rp2 500 000"], "required": True},
+    {"id": "menyesal", "section": "DI MATEMATIKA", "text": "Apakah menyesal masuk prodi Matematika?", "type": "radio", "options": ["Sangat Menyesal", "Menyesal", "Netral", "Puas", "Sangat Puas"], "required": True},
     
-    # --- SECTION: TIPE MATEMATIKA PART III ---
-    {"id": "tipe_11", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[10]["question"], "type": "personality_quiz", "personality_q_index": 10},
-    {"id": "tipe_12", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[11]["question"], "type": "personality_quiz", "personality_q_index": 11},
-    {"id": "tipe_13", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[12]["question"], "type": "personality_quiz", "personality_q_index": 12},
-    {"id": "tipe_14", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[13]["question"], "type": "personality_quiz", "personality_q_index": 13},
-    {"id": "tipe_15", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[14]["question"], "type": "personality_quiz", "personality_q_index": 14},
+    # SECTION: TIPE MATEMATIKA PART III
+    {"id": "tipe_11", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[10]["question"], "type": "personality_quiz", "personality_q_index": 10, "required": False},
+    {"id": "tipe_12", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[11]["question"], "type": "personality_quiz", "personality_q_index": 11, "required": False},
+    {"id": "tipe_13", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[12]["question"], "type": "personality_quiz", "personality_q_index": 12, "required": False},
+    {"id": "tipe_14", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[13]["question"], "type": "personality_quiz", "personality_q_index": 13, "required": False},
+    {"id": "tipe_15", "section": "TIPE MATEMATIKA PART III", "text": PERSONALITY_QUESTIONS[14]["question"], "type": "personality_quiz", "personality_q_index": 14, "required": False},
 ]
 
 # --- 3. HITUNG SKOR MAKSIMUM (untuk plot) ---
@@ -461,17 +450,16 @@ if 'current_question' not in st.session_state:
     st.session_state.current_question = 0
     st.session_state.answers = {}
 
-# --- FIX 2: Add a callback function to save answers immediately ---
+# Callback function to save answers immediately
 def save_answer(q_id):
-    """
-    Callback function to save the widget's state to our 'answers' dictionary.
-    This fires *before* the script reruns.
-    """
     if q_id in st.session_state:
         st.session_state.answers[q_id] = st.session_state[q_id]
 
 
 # --- 5. BUILD STREAMLIT APP ---
+
+# --- FIX 1: Wrap entire app in our custom '.main-container' div ---
+st.markdown("<div class='main-container'>", unsafe_allow_html=True)
 
 st.title("📊 Database Karakteristik Matematika")
 st.markdown(
@@ -509,6 +497,7 @@ if st.session_state.current_question < total_questions:
     q_type = q_config["type"]
     q_text = q_config["text"]
     q_section = q_config["section"]
+    q_required = q_config.get("required", False) # Get required flag
 
     # --- Display Section Header ---
     if st.session_state.current_question == 0:
@@ -522,24 +511,16 @@ if st.session_state.current_question < total_questions:
     st.subheader(q_text)
     st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
 
-    is_valid = True
-    
     # Get previous answer for default value
-    # This now works because save_answer() updated it on the last interaction
     prev_answer = st.session_state.answers.get(q_id)
 
     # --- Render the correct widget based on type ---
-    # --- FIX 2: Add 'on_change' to all widgets ---
     
     if q_type == "text_input":
         st.text_input(q_text, value=prev_answer if prev_answer else "", label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
-        if not st.session_state.answers.get(q_id): # Validate from state
-            is_valid = False
             
     elif q_type == "text_area":
         st.text_area(q_text, value=prev_answer if prev_answer else "", label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
-        if not st.session_state.answers.get(q_id): # Validate from state
-            is_valid = False
 
     elif q_type == "radio":
         options = q_config["options"]
@@ -559,25 +540,41 @@ if st.session_state.current_question < total_questions:
         options = q_config["options"]
         default_value = prev_answer if (prev_answer and isinstance(prev_answer, list)) else []
         st.multiselect(q_text, options=options, default=default_value, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
-        if not st.session_state.answers.get(q_id): # Validate from state
-            is_valid = False
 
     elif q_type == "personality_quiz":
         options = list(PERSONALITY_OPTIONS.keys())
         default_answer = prev_answer if prev_answer else "Biasa Aja / Netral"
         default_index = options.index(default_answer)
         st.radio(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id, on_change=save_answer, args=(q_id,))
-        # Ensure default is saved if user doesn't touch it
         if not prev_answer:
-            st.session_state.answers[q_id] = default_answer
+            st.session_state.answers[q_id] = default_answer # Save default if untouched
 
-    # --- FIX 2: Remove the old (and now redundant) save block ---
-    # if answer is not None:
-    #     st.session_state.answers[q_id] = answer
 
-    # --- Validation Warning ---
-    if not is_valid:
-        st.warning("☝️ Harap isi jawaban lo sebelum lanjut.")
+    # --- FIX 2: VALIDATION LOGIC ---
+    is_valid = True
+    validation_message = None
+    current_value = st.session_state.answers.get(q_id)
+
+    if q_required and not current_value:
+        is_valid = False
+        validation_message = "☝️ Harap isi jawaban lo sebelum lanjut."
+    
+    # Specific validations
+    elif q_id == 'nama' and current_value and not current_value.isupper():
+        is_valid = False
+        validation_message = "Format salah. Nama harus ditulis dengan HURUF KAPITAL."
+    
+    elif q_id == 'nim' and current_value and not current_value.isupper():
+        is_valid = False
+        validation_message = "Format salah. NIM harus ditulis dengan HURUF KAPITAL."
+        
+    elif q_id == 'whatsapp' and current_value and (not current_value.startswith("wa.me/62") or len(current_value) < 13):
+        is_valid = False
+        validation_message = "Format WA salah. Harus: 'wa.me/62...'. Contoh: wa.me/628123456789"
+
+    # Show validation message
+    if validation_message:
+        st.error(validation_message)
         
     st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
     
@@ -603,9 +600,6 @@ if st.session_state.current_question < total_questions:
 
 if st.session_state.current_question == total_questions:
     
-    # ... (All the results page logic, plot, and descriptions remain unchanged) ...
-    # ... (This section is long, so I'm collapsing it for readability) ...
-    
     st.markdown("---")
     
     # --- 7a. Calculate Personality Score ---
@@ -616,7 +610,7 @@ if st.session_state.current_question == total_questions:
         if q_config["type"] == "personality_quiz":
             q_id = q_config["id"]
             p_q_index = q_config["personality_q_index"]
-            p_q = PERSONALITY_QUESTIONS[p_q_index] # Get weights from original list
+            p_q = PERSONALITY_QUESTIONS[p_q_index]
             
             answer_text = st.session_state.answers.get(q_id, "Biasa Aja / Netral")
             answer_score = PERSONALITY_OPTIONS.get(answer_text, 0)
@@ -659,7 +653,7 @@ if st.session_state.current_question == total_questions:
     ax.axhline(0, color='#64748b', linewidth=2.5, zorder=1, alpha=0.5)
     ax.axvline(0, color='#64748b', linewidth=2.5, zorder=1, alpha=0.5)
     
-    # Quadrant colors with better color theory
+    # Quadrant colors
     ax.fill_between([-plot_limit, 0], 0, plot_limit, color='#818cf8', alpha=0.12, zorder=1)
     ax.text(-plot_limit/2, plot_limit/2, "Si Visioner\n(Murni / Intuitif)", ha='center', va='center', fontsize=14, alpha=0.75, fontweight='bold', color='#4338ca')
     
@@ -758,7 +752,7 @@ if st.session_state.current_question == total_questions:
 
     st.markdown("---")
     
-    # --- 7e. MATEMATIKAWAN TERKENAL & CABANG MATEMATIKA ---
+    # --- 7e. MATEMATIKAWAN TERKENAL ---
     
     st.markdown("<h3 style='text-align: center; margin-bottom: 30px; margin-top: 40px;'>👥 Matematikawan Terkenal yang Cocok dengan Lo</h3>", unsafe_allow_html=True)
     
@@ -770,7 +764,7 @@ if st.session_state.current_question == total_questions:
         ],
         "arsitek": [
             {"name": "David Hilbert", "desc": "Arsitek sistem aksioma modern, menetapkan fondasi matematika dengan 23 masalah terkenalnya", "era": "1862-1943"},
-            {"name": "Emmy Noether", "desc": "Pembangun teori aljabar abstrak dengan pendekatan sistematis dan formal yang elegan", "era": "1882-1Dramaga, Bogor"},
+            {"name": "Emmy Noether", "desc": "Pembangun teori aljabar abstrak dengan pendekatan sistematis dan formal yang elegan", "era": "1882-1935"},
             {"name": "André Weil", "desc": "Arsitek teori bilangan modern dengan pendekatan formal dan struktural yang sangat presisi", "era": "1906-1998"}
         ],
         "pemodel": [
@@ -786,7 +780,7 @@ if st.session_state.current_question == total_questions:
     }
     
     cols = st.columns(3)
-    for idx, math in enumerate(mathematicians[personality_key]):
+    for idx, math in enumerate(mathematicians.get(personality_key, [])):
         with cols[idx]:
             st.markdown(
                 f"<div style='background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 24px; border-radius: 16px; "
@@ -798,16 +792,65 @@ if st.session_state.current_question == total_questions:
                 unsafe_allow_html=True
             )
     
+    st.markdown("<div style='height: 40px;'></div>", unsafe_allow_html=True)
+    
+    # --- FIX 3: ADDED "CABANG MATEMATIKA" SECTION ---
+    
+    st.markdown("<h3 style='text-align: center; margin-bottom: 30px;'>📚 Cabang Matematika yang Menarik Buat Lo</h3>", unsafe_allow_html=True)
+    
+    math_fields = {
+        "visioner": [
+            {"name": "🌀 Topologi", "desc": "Studi tentang bentuk dan ruang yang bertransformasi. Lo bakal suka konsep abstrak seperti manifold, homotopi, dan ruang-ruang eksotis.", "topics": "Topologi Aljabar • Teori Simpul • Manifold"},
+            {"name": "🎨 Geometri Diferensial", "desc": "Geometri di permukaan melengkung dengan kalkulus. Perfect buat yang suka visualisasi dan intuisi geometris yang kuat.", "topics": "Kurva & Permukaan • Tensor • Geometri Riemann"},
+            {"name": "🔮 Teori Kategori", "desc": "Bahasa abstrak yang menyatukan berbagai cabang matematika. Lo bakal suka pola universal dan struktur di balik struktur.", "topics": "Functor • Natural Transformation • Category Theory"},
+            {"name": "🌌 Geometri Aljabar", "desc": "Studi bentuk geometri lewat persamaan aljabar. Kombinasi indah antara visualisasi geometris dan struktur aljabar abstrak.", "topics": "Varieties • Schemes • Cohomology Theory"},
+        ],
+        "arsitek": [
+            {"name": "🏛️ Teori Himpunan & Logika", "desc": "Fondasi dari semua matematika. Lo bakal menikmati membangun matematika dari aksioma dasar dengan presisi sempurna.", "topics": "Aksioma ZFC • Model Theory • Proof Theory"},
+            {"name": "🔢 Aljabar Abstrak", "desc": "Studi struktur aljabar murni seperti grup, ring, dan field. Sistematis, elegan, dan beautifully structured.", "topics": "Group Theory • Ring Theory • Galois Theory"},
+            {"name": "📐 Teori Bilangan", "desc": "Eksplorasi mendalam sifat bilangan bulat dengan bukti yang rigorous dan elegant. The queen of mathematics.", "topics": "Number Theory • Diophantine Equations • Modular Forms"},
+            {"name": "🧩 Kombinatorika", "desc": "Seni menghitung dan menyusun objek diskrit dengan metode yang presisi. Struktur yang elegant dan proof yang beautiful.", "topics": "Graph Theory • Enumerative Combinatorics • Design Theory"},
+        ],
+        "pemodel": [
+            {"name": "🌊 Persamaan Diferensial", "desc": "Model perubahan di dunia nyata - dari cuaca, populasi, hingga aliran fluida. Powerful dan sangat aplikatif.", "topics": "PDE • Dynamical Systems • Chaos Theory"},
+            {"name": "🎲 Probabilitas & Stokastik", "desc": "Matematika ketidakpastian untuk finance, machine learning, dan sistem kompleks. Intuitive dan practical.", "topics": "Stochastic Calculus • Random Processes • Markov Chains"},
+            {"name": "🤖 Matematika Komputasi", "desc": "Kombinasi matematika dan algoritma untuk AI, data science, dan optimization. Super relevant di era digital.", "topics": "Machine Learning • Graph Theory • Optimization"},
+            {"name": "🎯 Riset Operasi", "desc": "Optimasi keputusan di sistem kompleks - supply chain, scheduling, resource allocation. Langsung applicable ke bisnis.", "topics": "Linear Programming • Integer Programming • Network Optimization"},
+        ],
+        "analis": [
+            {"name": "📊 Analisis Numerik", "desc": "Metode presisi tinggi untuk menyelesaikan masalah matematika di komputer. Essential untuk engineering dan science.", "topics": "Numerical Methods • Finite Elements • Error Analysis"},
+            {"name": "📈 Analisis Real & Kompleks", "desc": "Studi mendalam tentang fungsi, limit, dan kontinuitas dengan rigorous proofs. Foundation of calculus.", "topics": "Real Analysis • Complex Analysis • Functional Analysis"},
+            {"name": "💹 Matematika Keuangan", "desc": "Aplikasi matematika presisi untuk pricing, risk management, dan trading strategies di financial markets.", "topics": "Quantitative Finance • Options Pricing • Risk Models"},
+            {"name": "📉 Optimasi & Kontrol", "desc": "Mencari solusi terbaik dengan constraints ketat. Critical untuk engineering, manufacturing, dan logistics.", "topics": "Convex Optimization • Optimal Control • Calculus of Variations"},
+        ]
+    }
+    
+    # Display mathematical fields
+    for field in math_fields.get(personality_key, []):
+        st.markdown(
+            f"<div style='background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); padding: 28px; border-radius: 16px; "
+            f"margin-bottom: 20px; border-left: 6px solid #6366f1; box-shadow: 0 4px 12px rgba(99,102,241,0.1);'>"
+            f"<h4 style='color: #1e293b; margin-top: 0; font-size: 1.4em; margin-bottom: 12px;'>{field['name']}</h4>"
+            f"<p style='color: #475569; line-height: 1.7; font-size: 1.05em; margin-bottom: 16px;'>{field['desc']}</p>"
+            f"<div style='background: #f0f9ff; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #0ea5e9;'>"
+            f"<p style='color: #0c4a6e; margin: 0; font-size: 0.9em; font-weight: 600;'>📌 {field['topics']}</p>"
+            f"</div>"
+            f"</div>",
+            unsafe_allow_html=True
+        )
+    
     st.markdown("---")
     
     # --- 7f. SAVE RESULTS TO GOOGLE SHEETS ---
     
-    # Prepare the final data dictionary
     result_data = {}
     result_data["Timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    # Add all survey answers from our dictionary
-    for q_id, answer in st.session_state.answers.items():
+    # Add all survey answers
+    for q_config in MASTER_SURVEY_QUESTIONS:
+        q_id = q_config["id"]
+        answer = st.session_state.answers.get(q_id)
+        
         if isinstance(answer, list):
             result_data[q_id] = ", ".join(answer) # Convert multiselect list
         else:
@@ -818,7 +861,6 @@ if st.session_state.current_question == total_questions:
     result_data["Skor_Y_Formalis_Intuitif"] = score_y
     result_data["Tipe_Matematikawan"] = personality_name
     
-    # Save to Google Sheets
     if save_to_google_sheets(result_data):
         st.success("✅ Makasih udah ngisi! Hasil lo udah tersimpan ke database.")
     else:
@@ -832,3 +874,6 @@ if st.session_state.current_question == total_questions:
             st.session_state.current_question = 0
             st.session_state.answers = {}
             st.rerun()
+
+# --- FIX 1: Close the wrapper div ---
+st.markdown("</div>", unsafe_allow_html=True)
