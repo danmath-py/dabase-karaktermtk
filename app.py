@@ -86,7 +86,7 @@ st.markdown("""
     /* REVISI BOX PUTIH: Title kembali ke dalam box putih */
     h1 {
         text-align: center;
-        color: #1e293b !important; /* Warna gelap */
+        color: #ffffff !important; /* Warna gelap */
         font-size: 3.5em !important;
         font-weight: 900 !important;
         margin-top: 0 !important; /* Hapus margin atas */
