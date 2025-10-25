@@ -793,7 +793,7 @@ if st.session_state.current_question < total_questions:
         progress = (st.session_state.current_question) / total_questions
         st.progress(min(progress, 0.99))
         st.markdown(
-            f"<div style='text-align: center; font-weight: 700; color: #1e293b; font-size: 1.1em; margin-top: 12px;'>"
+            f"<div style='text-align: center; font-weight: 700; color: #f8f9fa; font-size: 1.1em; margin-top: 12px;'>"
             f"Soal {st.session_state.current_question + 1} dari {total_questions}"
             f"</div>",
             unsafe_allow_html=True
