@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-APP_VERSION = "v1.1 - Fixed UI"
+APP_VERSION = "v1.2 - Fixed Back-end Issues"
 
 def load_css():
     """Loads all custom CSS into the app."""
