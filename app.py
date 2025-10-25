@@ -1,7 +1,7 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import io
 import gspread
 from google.oauth2.service_account import Credentials
@@ -714,7 +714,13 @@ def render_math_fields(personality_key):
 def save_and_display_footer(score_x, score_y, personality_name):
     """Saves data to GSheets and shows the final success message and reset button."""
     result_data = {}
-    result_data["Timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Create WIB timezone (UTC+7)
+    wib_tz = timezone(timedelta(hours=7))
+    # Get the current time in WIB
+    wib_now = datetime.now(wib_tz)
+    
+    result_data["Timestamp"] = wib_now.strftime("%Y-%m-%d %H:%M:%S")
     
     # Loop through MASTER_SURVEY_QUESTIONS to guarantee order and completeness
     for q_config in MASTER_SURVEY_QUESTIONS:
