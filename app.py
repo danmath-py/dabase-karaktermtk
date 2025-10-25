@@ -395,8 +395,8 @@ MASTER_SURVEY_QUESTIONS = [
     {"id": "tipe_10", "section": "TIPE MATEMATIKA PART II", "text": PERSONALITY_QUESTIONS[9]["question"], "type": "personality_quiz", "personality_q_index": 9, "required": True},
 
     # SECTION: DI MATEMATIKA
-    {"id": "matkul_fav", "section": "DI MATEMATIKA", "text": "Matkul Favorit mu di prodi Matematika apa?", "type": "selectbox", "options": ["ALinDas", "GrafAlgo", "KalDu", "KomDas", "MatDis", "PLM", "PDB", "MetStat", "Geonal", "KalTi", "MetNum", "ProgLin", "PTP", "PDP", "AnKom", "Pemod", "PTL", "Prostok", "StatMat", "AnReal", "SA", "MatKrip", "AKM", "SisDim", "PRO"], "required": True},
-    {"id": "matkul_susah", "section": "DI MATEMATIKA", "text": "Apa Menurut mu Matkul Tersusah di prodi Matematika?", "type": "selectbox", "options": ["ALinDas", "GrafAlgo", "KalDu", "KomDas", "MatDis", "PLM", "PDB", "MetStat", "Geonal", "KalTi", "MetNum", "ProgLin", "PTP", "PDP", "AnKom", "Pemod", "PTL", "Prostok", "StatMat", "AnReal", "SA", "MatKrip", "AKM", "SisDim", "PRO"], "required": True},
+    {"id": "matkul_fav", "section": "DI MATEMATIKA", "text": "Matkul Favorit mu di prodi Matematika apa?", "type": "selectbox", "options": ["Pilih salah satu...", "ALinDas", "GrafAlgo", "KalDu", "KomDas", "MatDis", "PLM", "PDB", "MetStat", "Geonal", "KalTi", "MetNum", "ProgLin", "PTP", "PDP", "AnKom", "Pemod", "PTL", "Prostok", "StatMat", "AnReal", "SA", "MatKrip", "AKM", "SisDim", "PRO"], "required": True},
+    {"id": "matkul_susah", "section": "DI MATEMATIKA", "text": "Apa Menurut mu Matkul Tersusah di prodi Matematika?", "type": "selectbox", "options": ["Pilih salah satu...", "ALinDas", "GrafAlgo", "KalDu", "KomDas", "MatDis", "PLM", "PDB", "MetStat", "Geonal", "KalTi", "MetNum", "ProgLin", "PTP", "PDP", "AnKom", "Pemod", "PTL", "Prostok", "StatMat", "AnReal", "SA", "MatKrip", "AKM", "SisDim", "PRO"], "required": True},
     {"id": "jam_belajar", "section": "DI MATEMATIKA", "text": "Berapa Jam yang kamu gunakan untuk belajar per minggu?", "type": "radio", "options": ["G belajar", "1-2", "3-5", "6-10", "11-15", "16-20", "21-25", "26+"], "required": True},  
     {"id": "waktu_luang", "section": "DI MATEMATIKA", "text": "Apa Kegiatan yang kamu lakukan di Waktu Luang? (Boleh pilih lebih dari 1)", "type": "multiselect", "options": ["Belajar", "Nonton Video/Film", "Tidur", "Nongkrong", "Aktif Kegiatan Kampus", "Main Game", "Sosmed", "Lainnya"], "required": True},
     {"id": "pengeluaran", "section": "DI MATEMATIKA", "text": "Biasanya Pengeluaran per Bulan berapa? (tidak harus jawab)", "type": "radio", "options": ["Nggak mau jawab", "<Rp1 000 000", "Rp1 000 000-Rp2 000 000", "Rp2 000 000-Rp2 500 000", "+Rp2 500 000"], "required": True},
@@ -576,7 +576,11 @@ def validate_answer(q_config, current_value):
     
     if q_required and not current_value:
         return False, "☝️ Harap isi jawaban lo sebelum lanjut."
-    
+
+    # Check if a required selectbox is still on the placeholder
+    if q_type == "selectbox" and q_required and current_value == q_config["options"][0]:
+        return False, "☝️ Harap isi jawaban lo sebelum lanjut."
+        
     if q_id == 'nama' and current_value and not current_value.isupper():
         return False, "Format salah. Nama harus ditulis dengan HURUF KAPITAL."
     
@@ -833,11 +837,21 @@ if st.session_state.current_question < total_questions:
     
     elif q_type == "selectbox":
         options = q_config["options"]
-        default_index = None
+        
+        # Default to the placeholder (index 0)
+        default_index = 0 
         if prev_answer in options:
+            # If an answer is already saved, find its index
             default_index = options.index(prev_answer)
             
-        st.selectbox(q_text, options=options, index=default_index, label_visibility="collapsed", key=q_id, on_change=save_answer_callback, args=(q_id,), placeholder="Pilih salah satu...")
+        st.selectbox(q_text, 
+                     options=options, 
+                     index=default_index,  # This will now correctly show the saved answer
+                     label_visibility="collapsed", 
+                     key=q_id, 
+                     on_change=save_answer_callback, 
+                     args=(q_id,)) 
+                     # The placeholder argument is completely removed
         
     elif q_type == "multiselect":
         options = q_config["options"]
