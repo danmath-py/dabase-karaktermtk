@@ -19,7 +19,7 @@ def load_css():
     st.markdown("""
     <style>
         /* Import font */
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800;900&display=swap'); /* <-- URL Noto Sans */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800;900&display=swap&v=1'); /* <-- URL Noto Sans */
         
         * {
             font-family: 'Noto Sans', sans-serif; /* <-- Nama Font Noto Sans */
