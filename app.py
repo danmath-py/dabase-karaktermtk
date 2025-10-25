@@ -14,6 +14,8 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+APP_VERSION = "v1.1 - Fixed UI"
+
 def load_css():
     """Loads all custom CSS into the app."""
     st.markdown("""
@@ -930,11 +932,14 @@ else:
 
 st.markdown("</div>", unsafe_allow_html=True) # Close .main-container
 
-footer_text = "Copyright by Departemen Riset dan Analisis GUMATIKA SSMI IPB 2025"
+footer_text = f"Copyright by Departemen Riset dan Analisis GUMATIKA SSMI IPB 2025 | {APP_VERSION}"
 st.markdown(
     f"""
-    <div style='text-align: center; color: #f8f9fa; font-size: 0.85em; margin-top: 40px; margin-bottom: 20px;'>
+    <div style='text-align: center; color: #f8f9fa; font-size: 0.85em; margin-top: 40px; margin-bottom: 10px;'>
         {footer_text}
+    </div>
+    <div style='text-align: center; color: #adb5bd; font-size: 0.75em; margin-bottom: 20px;'>
+        Tidak melihat update terbaru? Coba hard refresh (Ctrl+Shift+R atau Cmd+Shift+R).
     </div>
     """,
     unsafe_allow_html=True
